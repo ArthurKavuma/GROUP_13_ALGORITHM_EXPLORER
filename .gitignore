@@ -1,0 +1,13 @@
+# Maven build output
+target/
+
+# IDE and extension directories
+.vscode/
+.github/
+.idea/
+*.iml
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
