@@ -1,0 +1,279 @@
+/* ==========================================================================
+   Algorithm Explorer Stylesheet
+   Group 13 Final DAA Project
+   Palette: white surfaces, light-grey fills, slate/charcoal text.
+   ========================================================================== */
+
+/* --------- 1. Design tokens --------- */
+:root {
+  /* Surfaces */
+  --c-page: #f4f5f7;
+  --c-surface: #ffffff;
+  --c-surface-muted: #f8f9fa;
+  --c-fill: #e9ebef;
+  --c-fill-strong: #dde1e6;
+
+  /* Lines */
+  --c-border: #e2e5e9;
+  --c-border-strong: #d0d5db;
+  --c-border-focus: #8b94a1;
+
+  /* Text */
+  --c-text: #1d2129;
+  --c-text-muted: #5c6370;
+  --c-text-subtle: #8a919c;
+
+  /* Accent (slate) */
+  --c-slate: #444d5c;
+  --c-slate-hover: #363e4b;
+
+  /* Status (muted, academic) */
+  --c-danger-fg: #8a2f2f;
+  --c-danger-dot: #c25555;
+
+  /* Shape & depth */
+  --radius-sm: 6px;
+  --radius: 10px;
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.05);
+  --shadow: 0 1px 3px rgba(16, 24, 40, 0.06), 0 1px 2px rgba(16, 24, 40, 0.04);
+  --shadow-card: 0 1px 2px rgba(16, 24, 40, 0.06), 0 2px 6px rgba(16, 24, 40, 0.06);
+
+  /* Type */
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Consolas, "Liberation Mono", monospace;
+}
+
+/* --------- 2. Base --------- */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html, body { margin: 0; }
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--c-text);
+  background: var(--c-page);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+[hidden] { display: none !important; }
+
+/* --------- 3. Header --------- */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 28px;
+  background: var(--c-surface);
+  border-bottom: 1px solid var(--c-border);
+}
+
+.app-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* --------- 4. Layout --------- */
+.layout {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 20px;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 20px 28px 28px;
+}
+
+.sidebar,
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+.panel {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.panel-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+}
+
+/* --------- 5. Form controls --------- */
+.controls-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 18px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.field-label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.input {
+  width: 100%;
+  padding: 9px 11px;
+  font: inherit;
+  color: inherit;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border-strong);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--c-border-focus);
+  box-shadow: 0 0 0 3px rgba(68, 77, 92, 0.12);
+}
+
+textarea.input {
+  min-height: 72px;
+  resize: vertical;
+  font-variant-numeric: tabular-nums;
+}
+
+.input.has-error { border-color: var(--c-danger-dot); }
+
+.field-error {
+  margin: 0;
+  font-size: 12px;
+  color: var(--c-danger-fg);
+}
+
+.select-wrap { position: relative; }
+
+.select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 36px;
+  cursor: pointer;
+}
+
+.select-wrap::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  width: 7px;
+  height: 7px;
+  border-right: 1.5px solid var(--c-text-muted);
+  border-bottom: 1.5px solid var(--c-text-muted);
+  transform: translateY(-70%) rotate(45deg);
+  pointer-events: none;
+}
+
+/* --------- 6. Buttons --------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font: inherit;
+  font-weight: 500;
+  color: var(--c-text);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--c-border-focus);
+  outline-offset: 2px;
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.btn-primary {
+  padding: 10px 16px;
+  color: #ffffff;
+  background: var(--c-slate);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover:not(:disabled) { background: var(--c-slate-hover); }
+
+.btn-secondary {
+  padding: 10px 16px;
+  background: var(--c-fill);
+  border-color: var(--c-border);
+}
+
+.btn-secondary:hover:not(:disabled) { background: var(--c-fill-strong); }
+
+.btn-chip {
+  padding: 3px 9px;
+  font-size: 12px;
+  background: var(--c-fill);
+  border-color: var(--c-border);
+}
+
+.btn-chip:hover:not(:disabled) { background: var(--c-fill-strong); }
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+/* --------- 7. Time complexity --------- */
+.complexity-panel {
+  flex: 1;
+  padding: 18px;
+}
+
+.complexity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 16px 0 0;
+}
+
+.complexity-row {
+  display: flex;
+  gap: 6px;
+}
+
+.complexity-row dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
