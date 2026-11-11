@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Algorithm Explorer step-by-step sorting algorithm visualizer." />
+  <title>Algorithm Explorer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <!-- ===================== Header ===================== -->
+  <header class="app-header">
+    <h1 class="app-title">Algorithm Explorer</h1>
+  </header>
+
+  <main class="layout">
+    <!-- ===================== Left Sidebar ===================== -->
+    <aside class="sidebar" aria-label="Controls">
+      <section class="panel controls-panel">
+        <div class="field">
+          <div class="field-header">
+            <label for="input-data" class="field-label">Input Data</label>
+            <button type="button" id="btn-random" class="btn btn-chip">
+              Generate Random
+            </button>
+          </div>
+          <textarea
+            id="input-data"
+            class="input"
+            rows="3"
+            spellcheck="false"
+            aria-describedby="input-error"
+          >45, 12, 89, 33, 7, 21, 54, 18</textarea>
+          <p id="input-error" class="field-error" role="alert" hidden></p>
+        </div>
+
+        <div class="field">
+          <label for="algorithm-select" class="field-label">Algorithm</label>
+          <div class="select-wrap">
+            <select id="algorithm-select" class="input select">
+              <option value="BUBBLE_SORT">Bubble Sort</option>
+              <option value="SELECTION_SORT">Selection Sort</option>
+              <option value="INSERTION_SORT">Insertion Sort</option>
+              <option value="MERGE_SORT">Merge Sort (Recursive)</option>
+              <option value="QUICK_SORT" selected>Quick Sort (Recursive)</option>
+              <option value="HEAP_SORT">Heap Sort</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="structure-select" class="field-label">Custom Data Structure</label>
+          <div class="select-wrap">
+            <select id="structure-select" class="input select">
+              <option value="CUSTOM_ARRAYLIST" selected>Custom ArrayList</option>
+              <option value="CUSTOM_LINKEDLIST">Custom LinkedList</option>
+              <option value="CUSTOM_STACK">Custom Stack</option>
+              <option value="CUSTOM_QUEUE">Custom Queue</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="button" id="btn-run" class="btn btn-primary">
+            Run
+          </button>
+          <button type="button" id="btn-reset-all" class="btn btn-secondary">
+            Reset
+          </button>
+        </div>
+      </section>
+
+      <section class="panel complexity-panel" aria-labelledby="complexity-title">
+        <h2 id="complexity-title" class="panel-title">Time Complexity</h2>
+        <dl class="complexity-list">
+          <div class="complexity-row">
+            <dt>Worst-Case:</dt>
+            <dd id="cx-worst">-</dd>
+          </div>
+          <div class="complexity-row">
+            <dt>Average-Case:</dt>
+            <dd id="cx-average">-</dd>
+          </div>
+          <div class="complexity-row">
+            <dt>Best-Case:</dt>
+            <dd id="cx-best">-</dd>
+          </div>
+        </dl>
+      </section>
+    </aside>
+
+    <!-- ===================== Main Column ===================== -->
+    <div class="main"></div>
+  </main>
+</body>
+</html>
