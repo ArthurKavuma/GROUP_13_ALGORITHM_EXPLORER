@@ -94,7 +94,43 @@
     </aside>
 
     <!-- ===================== Main Column ===================== -->
-    <div class="main"></div>
+<div class="main">
+  <!-- Sorting Visualizer -->
+  <section class="panel visualizer-panel" aria-labelledby="visualizer-title">
+    <div class="visualizer-header">
+      <h2 id="visualizer-title" class="panel-title">
+        Sorting Visualizer
+      </h2>
+    </div>
+    <div id="stage" class="stage">
+      <div id="linear-stage" class="linear-stage">
+        <div
+          id="array-row"
+          class="array-row"
+          role="list"
+          aria-label="Array elements"
+        ></div>
+        <div
+          id="pointer-row"
+          class="pointer-row"
+          aria-hidden="true"
+        ></div>
+      </div>
+      <div
+        id="tree-stage"
+        class="tree-stage"
+        role="group"
+        aria-label="Tree visualization"
+        hidden
+      ></div>
+    </div>
+    <p
+      id="step-description"
+      class="step-description"
+      aria-live="polite"
+    ></p>
+  </section>
+</div>
   </main>
 </body>
 </html>
