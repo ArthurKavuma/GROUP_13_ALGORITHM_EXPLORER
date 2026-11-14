@@ -70,7 +70,6 @@ public class StackBackedList<T> implements CustomList<T> {
  }
  return result;
  }
-Java
  private void checkIndex(int index) {
  if (index < 0 || index >= primaryStack.size()) {
  throw new IndexOutOfBoundsException(
