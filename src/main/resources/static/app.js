@@ -133,3 +133,78 @@ function cacheElements() {
     els[key] = el;
   }
 }
+
+/* ==========================================================================
+ * 4. SPRING BOOT API LAYER
+ * ========================================================================== */
+
+/**
+ * Calls the Spring Boot endpoint (POST /api/sort) and returns the TrackingObject.
+ *
+ * @param {number[]} inputArray
+ * @param {string}   algorithm
+ * @param {string}   [dataStructure]
+ * @returns {Promise<TrackingObject>}
+ */
+async function fetchApiData(inputArray, algorithm, dataStructure = DEFAULTS.dataStructure) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 10000);
+
+  try {
+    const response = await fetch(`${CONFIG.API_BASE_URL}/sort`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({ array: inputArray, algorithm, dataStructure }),
+      signal: controller.signal,
+    });
+
+    if (!response.ok) {
+      let detail = '';
+      try {
+        const errJson = await response.json();
+        detail = errJson.message || errJson.error || '';
+      } catch {
+        detail = await response.text().catch(() => '');
+      }
+      throw new Error(`Backend responded ${response.status}: ${detail || response.statusText}`);
+    }
+
+    return await response.json();
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+/** Validates and normalizes the TrackingObject returned by Spring Boot. */
+function normalizeTracking(tracking) {
+  if (!tracking || !Array.isArray(tracking.steps) || tracking.steps.length === 0) {
+    throw new Error('Tracking object contains no steps.');
+  }
+
+  const steps = tracking.steps.map((step, i) => {
+    if (!Array.isArray(step.array)) throw new Error(`Step ${i} is missing its "array" snapshot.`);
+    return {
+      array: step.array,
+      description: step.description ?? '',
+      trace: step.trace ?? step.description ?? '',
+      pointers: step.pointers ?? [],
+      active: step.active ?? [],
+      pivot: step.pivot ?? null,
+      sorted: step.sorted ?? [],
+      comparisons: step.comparisons ?? 0,
+      swaps: step.swaps ?? 0,
+      mergeTree: step.mergeTree ?? null,
+    };
+  });
+
+  const last = steps[steps.length - 1];
+  return {
+    ...tracking,
+    steps,
+    metrics: {
+      runningTimeNs: tracking.metrics?.runningTimeNs ?? null,
+      comparisons: tracking.metrics?.comparisons ?? last.comparisons,
+      swaps: tracking.metrics?.swaps ?? last.swaps,
+    },
+  };
+}
