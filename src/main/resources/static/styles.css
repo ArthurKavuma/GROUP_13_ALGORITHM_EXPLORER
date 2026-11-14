@@ -277,3 +277,44 @@ textarea.input {
   margin: 0;
   font-variant-numeric: tabular-nums;
 }
+/* --------- 8. Visualizer --------- */
+.visualizer-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.visualizer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 18px 0;
+}
+
+.stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 230px;
+  padding: 40px 24px 8px;
+}
+
+.stage.is-tree-mode {
+  min-height: 290px;
+  padding: 20px 20px 4px;
+}
+
+.linear-stage {
+  display: flex;
+  flex-direction: column;
+}
+
+.array-row,
+.pointer-row {
+  display: grid;
+  grid-template-columns: repeat(var(--n, 8), minmax(0, 72px));
+  justify-content: center;
+  column-gap: 14px;
+}
