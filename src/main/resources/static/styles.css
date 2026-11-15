@@ -421,3 +421,159 @@ textarea.input {
   background: var(--c-fill);
   border-radius: 4px;
 }
+/* Merge Sort: recursion split tree */
+.merge-tree {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 4px 0 10px;
+}
+
+.merge-tree[data-levels="5"] { gap: 14px; }
+
+.merge-level {
+  display: grid;
+  grid-template-columns: repeat(var(--n, 8), minmax(0, var(--col-max, 56px)));
+  justify-content: center;
+  column-gap: 8px;
+}
+
+.merge-group {
+  grid-column: var(--start) / span var(--span);
+  justify-self: center;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 5px 6px;
+  background: var(--c-surface-muted);
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.merge-group-cells {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.merge-group.is-pending {
+  opacity: 0.42;
+  background: transparent;
+  border-style: dashed;
+}
+
+.merge-group.is-focus {
+  background: var(--c-fill);
+  border-color: #9da5b0;
+  box-shadow: 0 2px 6px rgba(16, 24, 40, 0.08);
+}
+
+.merge-group.is-merged {
+  background: var(--c-surface);
+  border-color: var(--c-border-strong);
+}
+
+.merge-card {
+  width: var(--cell-size, 36px);
+  height: var(--cell-size, 36px);
+  aspect-ratio: auto;
+  border-radius: 6px;
+  box-shadow: var(--shadow-sm);
+}
+
+.merge-card .card-value {
+  font-size: var(--cell-font, 13px);
+}
+
+.merge-range {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.1;
+  color: var(--c-text-subtle);
+}
+
+.merge-group.is-focus .merge-range {
+  color: var(--c-slate);
+  font-weight: 500;
+}
+
+/* Array element card */
+.card {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1 / 1;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border-strong);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  container-type: inline-size;
+  transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card-value {
+  font-size: clamp(12px, 36cqi, 28px);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+.card.is-active {
+  background: var(--c-fill);
+  border-color: #c4cad1;
+  box-shadow: 0 2px 6px rgba(16, 24, 40, 0.1);
+}
+
+.card.is-pivot {
+  background: var(--c-fill-strong);
+  border-color: #9da5b0;
+  box-shadow: 0 2px 8px rgba(16, 24, 40, 0.12);
+}
+
+/* Elements in their final position get a subtle slate underline */
+.card.is-sorted::after {
+  content: "";
+  position: absolute;
+  left: 26%;
+  right: 26%;
+  bottom: 9%;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--c-slate);
+  opacity: 0.5;
+}
+
+/* Pointer labels (aligned to the same grid as the cards) */
+.pointer-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 56px;
+}
+
+.pointer-tick {
+  width: 1.5px;
+  height: 16px;
+  margin-top: 6px;
+  background: #9aa2ad;
+  border-radius: 1px;
+}
+
+.pointer-label {
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--c-text-muted);
+  white-space: nowrap;
+}
+
+.step-description {
+  min-height: calc(1.5em + 36px);
+  margin: 0;
+  padding: 12px 24px 24px;
+  text-align: center;
+  color: var(--c-text);
+}
