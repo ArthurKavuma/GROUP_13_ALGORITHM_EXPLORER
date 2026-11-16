@@ -216,6 +216,43 @@
   />
 </div>
   </section>
+  <!-- Metrics Footer -->
+    <section class="metrics" aria-label="Metrics">
+      <article class="panel metric-card">
+        <header class="metric-header">
+          <h3 class="metric-title">Running Time</h3>
+          <span class="metric-tag">KPI</span>
+        </header>
+        <p class="metric-value"><span id="metric-time">—</span></p>
+      </article>
+
+      <article class="panel metric-card">
+        <header class="metric-header">
+          <h3 class="metric-title">Operations Count</h3>
+          <span class="metric-tag">KPI</span>
+        </header>
+        <p class="metric-value metric-value-sm">
+          Comparisons: <span id="metric-comparisons">—</span>
+          <span class="metric-sep" aria-hidden="true">|</span>
+          Swaps/Shifts: <span id="metric-swaps">—</span>
+        </p>
+      </article>
+
+      <article class="panel metric-card trace-card">
+        <header class="metric-header">
+          <h3 class="metric-title">Execution Trace</h3>
+          <span class="metric-tag">KPI</span>
+        </header>
+        <p id="trace-subtitle" class="metric-subtitle">
+          Custom ArrayList Log
+        </p>
+        <ol
+          id="trace-log"
+          class="trace-log"
+          aria-label="Execution trace log"
+        ></ol>
+      </article>
+    </section>
 </div>
   </main>
 </body>
