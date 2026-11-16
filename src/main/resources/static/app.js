@@ -208,3 +208,245 @@ function normalizeTracking(tracking) {
     },
   };
 }
+/* ---------- 5a. Tree rendering (Heap Sort & Merge Sort) ---------- */
+
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+function currentAlgorithm() {
+  return state.tracking?.algorithm ?? els.algorithm.value;
+}
+
+/**
+ * Computes the recursive interval layout for Merge Sort on [0..n-1].
+ */
+function buildMergeTreeLevels(n) {
+  const levels = [];
+
+  const visit = (lo, hi, depth, parentId = null) => {
+    if (!levels[depth]) levels[depth] = [];
+
+    const id = `${1o}-${hi}`;
+    levels[depth].push({ id, lo, hi, depth, parentId });
+
+    if (lo < hi) {
+      const mid = Math.floor((lo + hi) / 2);
+      visit(lo, mid, depth + 1, id);
+      visit(mid + 1, hi, depth + 1, id);
+    }
+  };
+
+  if (n > 0) visit(0, n - 1, 0, null);
+  return levels;
+}
+
+function createEdgesSvg() {
+  const svg = document.createElementNS(SVG_NS, 'svg');
+  svg.setAttribute('class', 'tree-edges');
+  svg.setAttribute('aria-hidden', 'true');
+  return svg;
+}
+
+/**
+ * Draws SVG connectors between every child and its parent.
+ */
+function drawTreeEdges() {
+  if (!els.treeStage || els.treeStage.hidden) return;
+
+  const svg = els.treeStage.querySelector('.tree-edges');
+  if (!svg) return;
+
+  const stageRect = els.treeStage.getBoundingClientRect();
+  if (stageRect.width === 0 || stageRect.height === 0) return;
+
+  svg.setAttribute('viewBox', `0 0 ${stageRect.width} ${stageRect.height}`);
+
+  const byId = new Map();
+
+  for (const el of els.treeStage.querySelectorAll('[data-node-id]')) {
+    byId.set(el.dataset.nodeId, el);
+  }
+
+  const paths = [];
+
+  for (const childEl of els.treeStage.querySelectorAll('[data-parent-id]')) {
+    const parentEl = byId.get(childEl.dataset.parentId);
+    if (!parentEl) continue;
+
+    const pRect = parentEl.getBoundingClientRect();
+
+    const pAnchor = parentEl.parentElement?.classList.contains('heap-slot')
+      ? parentEl.parentElement.getBoundingClientRect()
+      : pRect;
+
+    const cRect = childEl.getBoundingClientRect();
+
+    const x1 = pRect.left - stageRect.left + pRect.width / 2;
+    const y1 = pAnchor.bottom - stageRect.top + 2;
+    const x2 = cRect.left - stageRect.left + cRect.width / 2;
+    const y2 = cRect.top - stageRect.top - 2;
+
+    const path = document.createElementNS(SVG_NS, 'path');
+
+    path.setAttribute(
+      'd',
+      `M ${x1.toFixed(1)} ${y1.toFixed(1)} L ${x2.toFixed(1)} ${y2.toFixed(1)}`
+    );
+
+    let cls = 'tree-edge';
+
+    if (childEl.dataset.edgeState === 'active') cls += ' is-active';
+    if (childEl.dataset.edgeState === 'detached') cls += ' is-detached';
+
+    path.setAttribute('class', cls);
+    paths.push(path);
+  }
+
+  svg.replaceChildren(...paths);
+}
+
+/**
+ * Renders the array as a complete binary heap tree.
+ */
+function renderHeapTree(values, step = null) {
+  const n = values.length;
+
+  const numLevels = Math.floor(Math.log2(Math.max(1, n))) + 1;
+
+  const nodeSize = numLevels <= 3 ? '52px'
+    : numLevels === 4 ? '46px' : '38px';
+
+  const nodeFont = numLevels <= 3 ? '17px'
+    : numLevels === 4 ? '15px' : '13px';
+
+  const firstRects = new Map(
+    state.heapCardEls.map(el => [el, el.getBoundingClientRect()])
+  );
+
+  const pool = new Map();
+
+  for (const el of state.heapCardEls) {
+    const key = el.dataset.value;
+    if (!pool.has(key)) pool.set(key, []);
+    pool.get(key).push(el);
+  }
+
+  const nextEls = values.map(v => {
+    const card = pool.get(String(v))?.shift() ?? createCard(v);
+    card.className = 'card heap-card';
+    return card;
+  });
+
+  const active = new Set(step?.active ?? []);
+  const sorted = new Set(step?.sorted ?? []);
+
+  const pointersByIndex = Array.from({ length: n }, () => []);
+
+  for (const p of step?.pointers ?? []) {
+    if (Number.isInteger(p.index) && p.index >= 0 && p.index < n) {
+      pointersByIndex[p.index].push(p.label);
+    }
+  }
+
+  const tree = document.createElement('div');
+  tree.className = 'heap-tree';
+  tree.dataset.levels = String(numLevels);
+  tree.style.setProperty('--node-size', nodeSize);
+  tree.style.setProperty('--node-font', nodeFont);
+
+  for (let d = 0; d < numLevels; d++) {
+    const cols = 1 << d;
+    const startIdx = cols - 1;
+
+    const levelEl = document.createElement('div');
+    levelEl.className = 'heap-level';
+    levelEl.style.setProperty('--cols', String(cols));
+
+    for (let pos = 0; pos < cols; pos++) {
+      const idx = startIdx + pos;
+      const slot = document.createElement('div');
+      slot.className = 'heap-slot';
+
+      if (idx < n) {
+        const card = nextEls[idx];
+
+        card.classList.toggle('is-active', active.has(idx));
+        card.classList.toggle('is-pivot', step?.pivot === idx);
+        card.classList.toggle('is-sorted', sorted.has(idx));
+
+        card.setAttribute(
+          'aria-label',
+          `Heap index ${idx}: ${values[idx]}`
+        );
+
+        card.dataset.nodeId = `heap-${idx}`;
+
+        if (idx > 0) {
+          const parentIdx = Math.floor((idx - 1) / 2);
+          card.dataset.parentId = `heap-${parentIdx}`;
+
+          if (sorted.has(idx)) {
+            card.dataset.edgeState = 'detached';
+          } else if (active.has(idx) && active.has(parentIdx)) {
+            card.dataset.edgeState = 'active';
+          } else {
+            delete card.dataset.edgeState;
+          }
+        } else {
+          delete card.dataset.parentId;
+          delete card.dataset.edgeState;
+        }
+
+        const meta = document.createElement('div');
+        meta.className = 'heap-meta';
+
+        const indexTag = document.createElement('span');
+        indexTag.className = 'heap-index';
+        indexTag.textContent = `[${idx}]`;
+        meta.appendChild(indexTag);
+
+        for (const text of pointersByIndex[idx]) {
+          const ptrTag = document.createElement('span');
+          ptrTag.className = 'heap-pointer';
+          ptrTag.textContent = text;
+          meta.appendChild(ptrTag);
+        }
+
+        slot.append(card, meta);
+      }
+
+      levelEl.appendChild(slot);
+    }
+
+    tree.appendChild(levelEl);
+  }
+
+  els.treeStage.replaceChildren(createEdgesSvg(), tree);
+  state.heapCardEls = nextEls;
+
+  drawTreeEdges();
+
+  if (prefersReducedMotion()) return;
+
+  nextEls.forEach(el => {
+    const first = firstRects.get(el);
+    if (!first) return;
+
+    const last = el.getBoundingClientRect();
+
+    const dx = first.left - last.left;
+    const dy = first.top - last.top;
+
+    if (dx !== 0 || dy !== 0) {
+      el.animate(
+        [
+          { transform: `translate(${dx}px, ${dy}px)` },
+          { transform: 'translate(0, 0)' }
+        ],
+        {
+          duration: 340,
+          easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)'
+        }
+      );
+    }
+  });
+}
