@@ -1,14 +1,14 @@
-**Algorithm Explorer**
+# Algorithm Explorer — CSC2107 Group 13
 
-Algorithm Explorer is a full-stack interactive sorting and searching visualization platform built from scratch without using standard `java.util` collection classes for algorithm execution. It pairs a Spring Boot REST backend with a Vanilla JavaScript animation engine to execute, benchmark, and visualize six sorting algorithms and recursive binary search across four custom-built data structures.
+**Algorithm Explorer** is an interactive full-stack educational toolkit for **Recursion**, **Data Structures**, **Sorting Algorithms**, and **Time Complexity Analysis**, built from first principles without using standard `java.util` collection classes or built-in sort/search routines.
 
 ---
 
-## Team Members
+## Team Members (Group 13)
 
-| Name | 
+| Name |
 | :--- |
-| Tendo Kavuma Arthur C.
+| Tendo Kavuma Arthur C. |
 | Keith Rowland |
 | Joshua Odaga |
 | Manzi Joel |
@@ -18,217 +18,65 @@ Algorithm Explorer is a full-stack interactive sorting and searching visualizati
 
 ## Languages, Frameworks, and Tools
 
-### Programming Languages
-* **Java 17:** Core language used to implement custom data structures, sorting and searching algorithms, step-tracking instrumentation, and the REST API layer.
-* **JavaScript (ES6+):** Powers the client-side state management, asynchronous Fetch API calls, deterministic playback loop, bar renderer, and recursion tree visualizer.
-* **HTML5:** Structures the interactive control panels, metrics dashboard, playback controls, and visualization canvases.
-* **CSS3:** Provides responsive layout styling, custom theme variables, bar transition states, and pointer badge animations.
-
-### Frameworks and Libraries
-* **Spring Boot 3.2.5 (`spring-boot-starter-web`):** Hosts the embedded Apache Tomcat server, serves static frontend assets, exposes the RESTful endpoints (`/api/sort` and `/api/health`), and manages JSON serialization via Jackson.
-* **JUnit 5 (`spring-boot-starter-test`):** Executes automated unit and integration tests across all custom data structures, algorithms, and HTTP error-handling paths.
-
-### Build and Version Control Tools
-* **Apache Maven (Maven Wrapper `mvnw`):** Manages project dependencies, compilation, test execution, and application packaging without requiring a manual global Maven installation.
-* **Git & GitHub:** Used for branch-based version control, peer code reviews, and Pull Request workflows.
+* **Java 17 & Spring Boot 3.2.5 (`spring-boot-starter-web`):** Backend engine implementing all recursive algorithms, custom data structures, sorting algorithms, step-tracking instrumentation, experimental benchmarking, and REST API endpoints.
+* **Vanilla JavaScript (ES6+), HTML5, and CSS3:** Single-page interactive frontend with a 4-module navigation bar, animated Tower of Hanoi pegs/disks, boxes-and-arrows Data Structure canvas, Yellow/Green Quicksort partition & Merge Sort tree visualizer, and SVG complexity line charts.
+* **JUnit 5 (`spring-boot-starter-test`) & Maven Wrapper (`mvnw`):** Automated unit and integration test suite.
 
 ---
 
-## How the System Works
+## Implemented Modules (Matching CSC2107 Project Specification)
 
-Algorithm Explorer separates algorithm execution and performance measurement on the backend from visual playback on the frontend.
+### Module A: Recursion Lab (`/api/recursion/*`)
+1. **(a) Fibonacci:** Computes $F(n)$ in three ways:
+   * **(i) Naive Recursion** ($O(2^n)$ time, capped at $n \le 30$ with on-screen explanation of overlapping subproblem explosion),
+   * **(ii) Memoized Recursion** ($O(n)$ time using a fixed-size `long[]` lookup array),
+   * **(iii) Bottom-Up Dynamic Programming** ($O(n)$ time using iterative table construction).
+   Displays the result, function call / loop iteration counts, and execution time.
+2. **(b) Factorial:** Computes $n!$ both **recursively** and **iteratively**, displaying the result, call/iteration counts, and time. Handles $n = 0$ ($0! = 1$) and rejects negative input ($n < 0$).
+3. **(c) Tower of Hanoi (Animated):** Supports $1..8$ disks and user-selectable **Source**, **Auxiliary**, and **Destination** pegs (`A`, `B`, `C`). Solves the puzzle recursively, lists every move (`"Move disk 1 from A to C"`), animates the disks with **Start/Pause**, **Step Back/Forward**, **Reset**, and **Speed** controls, and confirms that total moves equal $2^n - 1$.
 
-### 1. End-to-End Execution Workflow
+### Module B: Data Structures Lab (`/api/ds/*`)
+1. **(a) Stack (Array-Based, Fixed Capacity Set by User) & Bracket Balance Application:**
+   * Fixed-size array stack (`FixedArrayStack`) supporting `push`, `pop`, `peek`, `size`, `is_empty`, `is_full`, and `display` with explicit overflow and underflow messages.
+   * **Bracket Balance Checker (`BracketBalanceChecker`):** Uses `FixedArrayStack` to check whether a bracket expression such as `{ ( [ ] ) }` is balanced, displaying the stack state after each symbol.
+2. **(b) Queues (Fixed-Size Array):**
+   * **(i) Linear Queue (`LinearArrayQueue`):** Supports `enqueue`, `dequeue`, `front`, `size`, `is_empty`, `is_full`, and `display`. Demonstrates the **"False Full" problem** when `rear == capacity - 1` while `front > 0` leaves wasted empty slots at the front.
+   * **(ii) Circular Queue (`CircularArrayQueue`):** Supports the same operations and displays `front` and `rear` indices wrapping around to the start of the array via `(rear + 1) % capacity`.
+3. **(c) Singly & Doubly Linked Lists (`SinglyLinkedList`, `DoublyLinkedList`):**
+   * Built from custom `SinglyNode` (`next` only) and `DoublyNode` (`prev` and `next`) classes.
+   * Supports insertion at the beginning, at the end, before a given element, and after a given element; deletion at the beginning, at the end, before a given element, after a given element, and deletion of a given element; search for an element, `size`, and display (**forward** for both lists, and **backward** via `prev` pointers for the doubly linked list).
 
-1. **User Input and Configuration:** The user enters a custom integer array (or generates a random preset), selects one of the six sorting algorithms, and chooses one of the four underlying custom data structures in the browser UI.
-2. **REST API Request:** The frontend (`app.js`) sends an asynchronous `POST /api/sort` request containing a JSON payload (`SortRequestDto`) with the input array, chosen algorithm key, and chosen data structure key.
-3. **Validation and Error Handling:** `AlgorithmController` validates the request parameters. If the array is empty, exceeds the maximum permitted length, or contains an unrecognized algorithm or structure name, `GlobalExceptionHandler` intercepts the error and returns a structured `HTTP 400 Bad Request` JSON response.
-4. **Custom Data Structure Instantiation:** The backend loads the input numbers into the selected custom implementation (`CustomArrayList`, `CustomLinkedList`, `StackBackedList`, or `QueueBackedList`) behind the unified `CustomList<Integer>` interface.
-5. **Instrumented Sorting and Step Recording:** The selected sorting algorithm mutates the `CustomList<Integer>` in place. Every comparison, swap, value overwrite, pointer movement, recursion stack change, and merge tree snapshot is recorded into a `StepTracker` instance.
-6. **Nanosecond Timing and Verification:** The backend measures total execution duration using `System.nanoTime()`, verifies the sorted sequence using `RecursiveBinarySearch` with call-trace logging stored in a `CustomQueue<String>`, and packages the results into a `TrackingObjectDto`.
-7. **Deterministic Visual Playback:** The browser receives the complete `StepDto[]` trace and renders bar charts, active index pointers (`i`, `j`, `minIdx`, `keyIdx`, `pivot`, `left`, `right`), recursion call frames, and real-time operation counters. Users can play, pause, adjust playback speed, or step forward and backward frame by frame.
+### Module C: Sorting Lab (`/api/sort`, `/api/sort/compare-all`)
+* Implements **Bubble Sort**, **Selection Sort**, **Insertion Sort**, **Merge Sort**, and **Quicksort** (both the **first-element pivot with "yellow/green" partition taught in class** and the **randomised-pivot** version).
+* Shows the array after every pass or merge/partition step (with a toggle between pass-only steps and detailed comparison/swap steps), **Step** and **Auto-Play** controls, adjustable **Speed**, and color-coded highlights.
+* Displays comparisons, swaps/moves, and execution time, plus a **"Compare All"** button that runs all sorting algorithms on the same input and presents the results side by side in one table.
+* Displays each algorithm's best-, average-, and worst-case time complexity, extra space, and stability.
 
-### 2. System Architecture Diagram
-
-```mermaid
-flowchart TB
-    subgraph Client ["1. Frontend Layer (HTML5 / CSS3 / Vanilla JS)"]
-        UI["User Interface (index.html / styles.css)"]
-        APIClient["REST Client Layer (app.js)"]
-        Visualizer["Playback & Animation Engine (app.js)"]
-        UI -->|"User clicks Run"| APIClient
-        APIClient -->|"Parsed TrackingObjectDto"| Visualizer
-    end
-
-    subgraph BackendAPI ["2. Spring Boot REST API Layer"]
-        Controller["AlgorithmController (POST /api/sort)"]
-        ExceptionHandler["GlobalExceptionHandler (HTTP 400)"]
-        ReqDTO["SortRequestDto"]
-        ResDTO["TrackingObjectDto"]
-    end
-
-    subgraph DataStructures ["3. Custom Data Structures Layer"]
-        CustomList["CustomList<Integer> Interface"]
-        ArrayList["CustomArrayList"]
-        LinkedList["CustomLinkedList"]
-        StackList["StackBackedList (CustomStack)"]
-        QueueList["QueueBackedList (CustomQueue)"]
-        CustomList --> ArrayList
-        CustomList --> LinkedList
-        CustomList --> StackList
-        CustomList --> QueueList
-    end
-
-    subgraph Engine ["4. Algorithm & Step Tracking Engine"]
-        StepTracker["StepTracker (Metrics & StepDto Snapshots)"]
-        Sorters["Bubble, Selection, Insertion, Merge, Quick & Heap Sort"]
-        BinSearch["RecursiveBinarySearch"]
-    end
-
-    APIClient -->|"1. POST /api/sort"| ReqDTO
-    ReqDTO --> Controller
-    Controller -.->|"Invalid Input"| ExceptionHandler
-    ExceptionHandler -.->|"HTTP 400"| APIClient
-    Controller -->|"2. Instantiate"| CustomList
-    Controller -->|"3. Execute"| Sorters
-    Sorters <-->|"4. get(i) / set(i, v)"| CustomList
-    Sorters -->|"5. Record Steps"| StepTracker
-    StepTracker -->|"6. Package Trace"| ResDTO
-    ResDTO -->|"7. HTTP 200 JSON"| APIClient
-```
-
-### 3. Implemented Custom Data Structures
-
-All data structures reside in `com.group13.algorithmexplorer.datastructures` and implement or support `CustomList<T>` without relying on `java.util.ArrayList`, `java.util.LinkedList`, `java.util.Stack`, or `java.util.Queue`:
-
-* **CustomArrayList (`arraylist`):** Dynamically resizing contiguous array that doubles capacity when full, providing $O(1)$ indexed reads and writes.
-* **CustomLinkedList (`linkedlist`):** Doubly linked node chain (`Node<T>`) supporting bidirectional traversal for indexed access and element mutation.
-* **CustomStack and StackBackedList (`stack`):** Pure LIFO linked stack (`push`, `pop`, `peek`) paired with a `CustomList<T>` adapter that uses an auxiliary `CustomStack<T>` to access and update target indices.
-* **CustomQueue and QueueBackedList (`queue`):** Pure FIFO linked queue (`enqueue`, `dequeue`, `peek`) paired with a `CustomList<T>` adapter that rotates elements through the queue to perform indexed reads and writes.
-
-### 4. Implemented Algorithms
-
-All algorithms reside in `com.group13.algorithmexplorer.algorithms`:
-
-| Algorithm | Key | Best Time | Average Time | Worst Time | Space |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| Bubble Sort | `bubble` | $O(n)$ | $O(n^2)$ | $O(n^2)$ | $O(1)$ |
-| Selection Sort | `selection` | $O(n^2)$ | $O(n^2)$ | $O(n^2)$ | $O(1)$ |
-| Insertion Sort | `insertion` | $O(n)$ | $O(n^2)$ | $O(n^2)$ | $O(1)$ |
-| Merge Sort | `merge` | $O(n \log n)$ | $O(n \log n)$ | $O(n \log n)$ | $O(n)$ |
-| Quick Sort | `quick` | $O(n \log n)$ | $O(n \log n)$ | $O(n^2)$ | $O(\log n)$ |
-| Heap Sort | `heap` | $O(n \log n)$ | $O(n \log n)$ | $O(n \log n)$ | $O(1)$ |
-| Recursive Binary Search | N/A | $O(1)$ | $O(\log n)$ | $O(\log n)$ | $O(\log n)$ |
+### Module D: Time Complexity Analysis (`/api/benchmark/run`)
+* Times every sorting algorithm for $n \in \{100, 500, 1000, 2000, 5000, 10000\}$ (and $n \in \{50000, 100000\}$ for Merge Sort and Quicksort) across **Random**, **Already Sorted**, and **Reverse Sorted** inputs, repeating each run at least 3 times and reporting the average.
+* Plots running time against $n$ (one chart for $O(n^2)$ sorts and one for $O(n \log n)$ sorts), presents full tables (with CSV export), and discusses agreement with theoretical Big-O complexities.
 
 ---
 
 ## How to Run the Application
 
-### Prerequisites
-
-* **Java Development Kit (JDK):** Version 17 or higher installed and added to your system `PATH`.
-* **Maven:** Included automatically via the project's Maven Wrapper (`mvnw` / `mvnw.cmd`). No separate Maven installation is required.
-* **Web Browser:** Any modern browser (Chrome, Edge, Firefox, or Safari).
-
-### Step 1: Clone the Repository
-
-```bash
-git clone https://github.com/ArthurKavuma/GROUP_13_ALGORITHM_EXPLORER.git
-cd GROUP_13_ALGORITHM_EXPLORER
-```
-
-### Step 2: Start the Spring Boot Server
-
+### 1. Start the Spring Boot Server
 On **Windows (PowerShell or Command Prompt)**:
-
 ```powershell
 .\mvnw.cmd spring-boot:run
 ```
-
 On **macOS / Linux**:
-
 ```bash
 ./mvnw spring-boot:run
 ```
 
-### Step 3: Open the Visualizer in Your Browser
-
-Once the terminal displays `Started AlgorithmExplorerApplication`, open your browser and navigate to:
-
+### 2. Open in Your Browser
+Navigate to:
 ```text
 http://localhost:8080
 ```
 
-To verify the backend health endpoint directly, visit:
-
-```text
-http://localhost:8080/api/health
-```
-
-### Step 4: Run the Automated JUnit 5 Test Suite
-
-The project includes unit and integration tests covering all four custom data structures, `RecursiveBinarySearch`, the full $6 \times 4$ algorithm-by-data-structure execution matrix, and `HTTP 400` validation edge cases.
-
-On **Windows**:
-
+### 3. Run the Automated JUnit 5 Test Suite
 ```powershell
 .\mvnw.cmd test
 ```
-
-On **macOS / Linux**:
-
-```bash
-./mvnw test
-```
-
----
-
-## Project Directory Structure
-
-```text
-GROUP_13_ALGORITHM_EXPLORER/
-|-- pom.xml
-|-- mvnw.cmd
-|-- .gitignore
-|-- src/
-    |-- main/
-    |   |-- java/com/group13/algorithmexplorer/
-    |   |   |-- AlgorithmExplorerApplication.java
-    |   |   |-- algorithms/
-    |   |   |   |-- BubbleSort.java
-    |   |   |   |-- SelectionSort.java
-    |   |   |   |-- InsertionSort.java
-    |   |   |   |-- MergeSort.java
-    |   |   |   |-- QuickSort.java
-    |   |   |   |-- HeapSort.java
-    |   |   |   |-- RecursiveBinarySearch.java
-    |   |   |   `-- StepTracker.java
-    |   |   |-- controller/
-    |   |   |   |-- AlgorithmController.java
-    |   |   |   `-- GlobalExceptionHandler.java
-    |   |   |-- datastructures/
-    |   |   |   |-- CustomList.java
-    |   |   |   |-- CustomArrayList.java
-    |   |   |   |-- CustomLinkedList.java
-    |   |   |   |-- CustomStack.java
-    |   |   |   |-- StackBackedList.java
-    |   |   |   |-- CustomQueue.java
-    |   |   |   |-- QueueBackedList.java
-    |   |   |   `-- Node.java
-    |   |   `-- dto/
-    |   |       |-- SortRequestDto.java
-    |   |       |-- TrackingObjectDto.java
-    |   |       |-- StepDto.java
-    |   |       |-- MetricsDto.java
-    |   |       `-- PointerDto.java
-    |   `-- resources/
-    |       |-- application.properties
-    |       `-- static/
-    |           |-- index.html
-    |           |-- styles.css
-    |           `-- app.js
-    `-- test/
-        `-- java/com/group13/algorithmexplorer/
-            `-- AlgorithmExplorerTests.java
-```
-

@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Algorithm Explorer — step-by-step sorting algorithm visualizer."
+      content="CSC2107 Algorithm Explorer — Interactive toolkit for Recursion, Data Structures, Sorting, and Time Complexity Analysis."
     />
     <title>Algorithm Explorer</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
@@ -20,267 +20,931 @@
     <script src="app.js" defer></script>
   </head>
   <body>
-    <!-- ===================== Header ===================== -->
+    <!-- ===================== Top Application Header & Module Navigation ===================== -->
     <header class="app-header">
-      <h1 class="app-title">Algorithm Explorer</h1>
+      <div class="brand-wrap">
+        <h1 class="app-title">Algorithm Explorer</h1>
+      </div>
+
+      <nav class="module-nav" aria-label="Main Modules">
+        <button type="button" class="module-tab is-active" data-module="module-a">
+          Module A: Recursion Lab
+        </button>
+        <button type="button" class="module-tab" data-module="module-b">
+          Module B: Data Structures Lab
+        </button>
+        <button type="button" class="module-tab" data-module="module-c">
+          Module C: Sorting Lab
+        </button>
+        <button type="button" class="module-tab" data-module="module-d">
+          Module D: Time Complexity
+        </button>
+      </nav>
     </header>
 
-    <main class="layout">
-      <!-- ===================== Left Sidebar ===================== -->
-      <aside class="sidebar" aria-label="Controls">
-        <section class="panel controls-panel">
-          <div class="field">
-            <div class="field-header">
-              <label for="input-data" class="field-label">Input Data</label>
-              <button type="button" id="btn-random" class="btn btn-chip">
-                Generate Random
+    <!-- =====================================================================================
+         MODULE A: RECURSION LAB
+         ===================================================================================== -->
+    <section id="module-a" class="module-view">
+      <div class="subnav-bar" role="tablist" aria-label="Recursion Lab Tasks">
+        <button type="button" class="subtab is-active" data-subtab="rec-fib">
+          (a) Fibonacci (3 Methods)
+        </button>
+        <button type="button" class="subtab" data-subtab="rec-fact">
+          (b) Factorial (Recursive vs Iterative)
+        </button>
+        <button type="button" class="subtab" data-subtab="rec-hanoi">
+          (c) Tower of Hanoi (Animated)
+        </button>
+      </div>
+
+      <!-- (a) Fibonacci Screen -->
+      <div id="rec-fib" class="subview">
+        <div class="layout">
+          <aside class="sidebar">
+            <section class="panel controls-panel">
+              <h2 class="panel-title">Fibonacci Input</h2>
+              <div class="field">
+                <label for="fib-n" class="field-label">Enter n (0 to 92; Naive ≤ 30)</label>
+                <input type="number" id="fib-n" class="input" value="20" min="0" max="92" />
+                <div class="preset-row">
+                  <button type="button" class="btn btn-chip" data-fib-preset="10">n = 10</button>
+                  <button type="button" class="btn btn-chip" data-fib-preset="20">n = 20</button>
+                  <button type="button" class="btn btn-chip" data-fib-preset="30">n = 30</button>
+                  <button type="button" class="btn btn-chip" data-fib-preset="45">n = 45 (DP/Memo)</button>
+                </div>
+                <p id="fib-error" class="field-error" role="alert" hidden></p>
+              </div>
+              <button type="button" id="btn-fib-run" class="btn btn-primary">
+                Compute Fibonacci
+              </button>
+            </section>
+
+            <section class="panel info-panel">
+              <h3 class="panel-title">Why Limit Naive Recursion to n ≤ 30?</h3>
+              <p id="fib-explanation" class="info-text">
+                Naive recursion recomputes overlapping subproblems (<code>fib(n-2)</code> is computed twice, <code>fib(n-3)</code> three times, etc.). Its call count grows exponentially as
+                <strong>T(n) = 2·F(n+1) − 1 = O(2ⁿ)</strong>. At <code>n = 30</code> it makes <strong>2,692,537</strong> recursive calls; at <code>n = 50</code> it would exceed 40 billion calls and freeze the system. Memoization and Bottom-Up DP store each subproblem once, reducing time to <strong>O(n)</strong>.
+              </p>
+            </section>
+          </aside>
+
+          <div class="main">
+            <div class="cards-grid-3" id="fib-cards">
+              <!-- Naive Card -->
+              <article class="panel method-card">
+                <header class="method-header">
+                  <h3>(i) Naive Recursion</h3>
+                  <span class="badge badge-warn">O(2ⁿ) Time · O(n) Space</span>
+                </header>
+                <dl class="stat-list">
+                  <div><dt>Result F(n):</dt><dd id="fib-naive-res">—</dd></div>
+                  <div><dt>Function Calls:</dt><dd id="fib-naive-ops">—</dd></div>
+                  <div><dt>Execution Time:</dt><dd id="fib-naive-time">—</dd></div>
+                </dl>
+                <ol id="fib-naive-trace" class="trace-log"></ol>
+              </article>
+
+              <!-- Memoized Card -->
+              <article class="panel method-card">
+                <header class="method-header">
+                  <h3>(ii) Memoized Recursion</h3>
+                  <span class="badge badge-ok">O(n) Time · O(n) Space</span>
+                </header>
+                <dl class="stat-list">
+                  <div><dt>Result F(n):</dt><dd id="fib-memo-res">—</dd></div>
+                  <div><dt>Function Calls:</dt><dd id="fib-memo-ops">—</dd></div>
+                  <div><dt>Execution Time:</dt><dd id="fib-memo-time">—</dd></div>
+                </dl>
+                <ol id="fib-memo-trace" class="trace-log"></ol>
+              </article>
+
+              <!-- Bottom-Up DP Card -->
+              <article class="panel method-card">
+                <header class="method-header">
+                  <h3>(iii) Bottom-Up DP</h3>
+                  <span class="badge badge-ok">O(n) Time · O(n) Table</span>
+                </header>
+                <dl class="stat-list">
+                  <div><dt>Result F(n):</dt><dd id="fib-dp-res">—</dd></div>
+                  <div><dt>Loop Iterations:</dt><dd id="fib-dp-ops">—</dd></div>
+                  <div><dt>Execution Time:</dt><dd id="fib-dp-time">—</dd></div>
+                </dl>
+                <ol id="fib-dp-trace" class="trace-log"></ol>
+              </article>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- (b) Factorial Screen -->
+      <div id="rec-fact" class="subview" hidden>
+        <div class="layout">
+          <aside class="sidebar">
+            <section class="panel controls-panel">
+              <h2 class="panel-title">Factorial Input (n!)</h2>
+              <div class="field">
+                <label for="fact-n" class="field-label">Enter non-negative integer n (0 to 20)</label>
+                <input type="number" id="fact-n" class="input" value="6" min="0" max="20" />
+                <div class="preset-row">
+                  <button type="button" class="btn btn-chip" data-fact-preset="0">n = 0 (0! = 1)</button>
+                  <button type="button" class="btn btn-chip" data-fact-preset="6">n = 6</button>
+                  <button type="button" class="btn btn-chip" data-fact-preset="12">n = 12</button>
+                  <button type="button" class="btn btn-chip" data-fact-preset="-5">Test n = -5</button>
+                </div>
+                <p id="fact-error" class="field-error" role="alert" hidden></p>
+              </div>
+              <button type="button" id="btn-fact-run" class="btn btn-primary">
+                Compute n!
+              </button>
+            </section>
+
+            <section class="panel info-panel">
+              <h3 class="panel-title">Complexity Notes</h3>
+              <p class="info-text">
+                Both Recursive and Iterative Factorial run in <strong>O(n)</strong> time. However, Recursive Factorial uses <strong>O(n)</strong> call-stack frames (<code>n + 1</code> calls down to base case <code>0! = 1</code>), whereas Iterative Factorial uses <strong>O(1)</strong> auxiliary space. Negative input is rejected.
+              </p>
+            </section>
+          </aside>
+
+          <div class="main">
+            <div class="cards-grid-2">
+              <article class="panel method-card">
+                <header class="method-header">
+                  <h3>Recursive Factorial</h3>
+                  <span class="badge">O(n) Time · O(n) Stack Space</span>
+                </header>
+                <dl class="stat-list">
+                  <div><dt>Result (n!):</dt><dd id="fact-rec-res">—</dd></div>
+                  <div><dt>Recursive Calls:</dt><dd id="fact-rec-ops">—</dd></div>
+                  <div><dt>Execution Time:</dt><dd id="fact-rec-time">—</dd></div>
+                </dl>
+                <h4 class="sub-heading">Call Stack Trace</h4>
+                <ol id="fact-rec-trace" class="trace-log trace-log-tall"></ol>
+              </article>
+
+              <article class="panel method-card">
+                <header class="method-header">
+                  <h3>Iterative Factorial</h3>
+                  <span class="badge badge-ok">O(n) Time · O(1) Extra Space</span>
+                </header>
+                <dl class="stat-list">
+                  <div><dt>Result (n!):</dt><dd id="fact-iter-res">—</dd></div>
+                  <div><dt>Loop Iterations:</dt><dd id="fact-iter-ops">—</dd></div>
+                  <div><dt>Execution Time:</dt><dd id="fact-iter-time">—</dd></div>
+                </dl>
+                <h4 class="sub-heading">Loop Trace</h4>
+                <ol id="fact-iter-trace" class="trace-log trace-log-tall"></ol>
+              </article>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- (c) Tower of Hanoi Screen -->
+      <div id="rec-hanoi" class="subview" hidden>
+        <div class="layout">
+          <aside class="sidebar">
+            <section class="panel controls-panel">
+              <h2 class="panel-title">Tower of Hanoi Setup</h2>
+              <div class="field">
+                <label for="hanoi-disks" class="field-label">Number of Disks (1 to 8)</label>
+                <input type="number" id="hanoi-disks" class="input" value="4" min="1" max="8" />
+              </div>
+
+              <div class="field-grid-3">
+                <div class="field">
+                  <label for="hanoi-src" class="field-label">Source</label>
+                  <select id="hanoi-src" class="input select">
+                    <option value="A" selected>Peg A</option>
+                    <option value="B">Peg B</option>
+                    <option value="C">Peg C</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="hanoi-aux" class="field-label">Auxiliary</label>
+                  <select id="hanoi-aux" class="input select">
+                    <option value="A">Peg A</option>
+                    <option value="B" selected>Peg B</option>
+                    <option value="C">Peg C</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="hanoi-dest" class="field-label">Destination</label>
+                  <select id="hanoi-dest" class="input select">
+                    <option value="A">Peg A</option>
+                    <option value="B">Peg B</option>
+                    <option value="C" selected>Peg C</option>
+                  </select>
+                </div>
+              </div>
+
+              <p id="hanoi-error" class="field-error" role="alert" hidden></p>
+
+              <button type="button" id="btn-hanoi-solve" class="btn btn-primary">
+                Solve &amp; Load Animation
+              </button>
+            </section>
+
+            <section class="panel info-panel">
+              <h3 class="panel-title">Move Formula Verification</h3>
+              <dl class="stat-list">
+                <div><dt>Current Move:</dt><dd id="hanoi-current-move">0 / 15</dd></div>
+                <div><dt>Total Moves:</dt><dd id="hanoi-total-moves">15</dd></div>
+                <div><dt>Formula 2ⁿ − 1:</dt><dd id="hanoi-formula">2⁴ − 1 = 15 ✓</dd></div>
+                <div><dt>Recursive Calls:</dt><dd id="hanoi-calls">—</dd></div>
+                <div><dt>Backend Time:</dt><dd id="hanoi-time">—</dd></div>
+              </dl>
+            </section>
+          </aside>
+
+          <div class="main">
+            <section class="panel visualizer-panel">
+              <div class="visualizer-header">
+                <h2 class="panel-title">Animated Tower of Hanoi</h2>
+              </div>
+
+              <div id="hanoi-stage" class="hanoi-stage">
+                <div class="hanoi-peg-col" data-peg="A">
+                  <div class="hanoi-rod"></div>
+                  <div id="hanoi-disks-A" class="hanoi-disks-stack"></div>
+                  <div class="hanoi-base">Peg A <span id="peg-role-A" class="peg-role"></span></div>
+                </div>
+                <div class="hanoi-peg-col" data-peg="B">
+                  <div class="hanoi-rod"></div>
+                  <div id="hanoi-disks-B" class="hanoi-disks-stack"></div>
+                  <div class="hanoi-base">Peg B <span id="peg-role-B" class="peg-role"></span></div>
+                </div>
+                <div class="hanoi-peg-col" data-peg="C">
+                  <div class="hanoi-rod"></div>
+                  <div id="hanoi-disks-C" class="hanoi-disks-stack"></div>
+                  <div class="hanoi-base">Peg C <span id="peg-role-C" class="peg-role"></span></div>
+                </div>
+              </div>
+
+              <p id="hanoi-step-desc" class="step-description" aria-live="polite"></p>
+
+              <div class="playback">
+                <button type="button" id="btn-hanoi-start" class="btn btn-primary btn-sm">Start / Pause</button>
+                <button type="button" id="btn-hanoi-prev" class="btn btn-secondary btn-sm">◀ Step Back</button>
+                <button type="button" id="btn-hanoi-next" class="btn btn-secondary btn-sm">Step Forward ▶</button>
+                <button type="button" id="btn-hanoi-reset" class="btn btn-secondary btn-sm">Reset</button>
+
+                <div class="speed-control">
+                  <label for="hanoi-speed">Speed:</label>
+                  <input type="range" id="hanoi-speed" min="100" max="1200" step="50" value="550" />
+                </div>
+
+                <input type="range" id="hanoi-slider" class="slider" min="0" max="0" value="0" step="1" />
+              </div>
+            </section>
+
+            <section class="panel method-card">
+              <header class="method-header">
+                <h3>Complete Recursive Move List</h3>
+                <span id="hanoi-move-count-tag" class="badge">0 moves</span>
+              </header>
+              <ol id="hanoi-move-log" class="trace-log trace-log-tall"></ol>
+            </section>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================================
+         MODULE B: DATA STRUCTURES LAB
+         ===================================================================================== -->
+    <section id="module-b" class="module-view" hidden>
+      <div class="subnav-bar" role="tablist" aria-label="Data Structures Lab Tasks">
+        <button type="button" class="subtab is-active" data-subtab="ds-stack">
+          (a) Stack (Fixed Array) &amp; Bracket Checker
+        </button>
+        <button type="button" class="subtab" data-subtab="ds-queue">
+          (b) Queues (Linear vs Circular)
+        </button>
+        <button type="button" class="subtab" data-subtab="ds-list">
+          (c) Singly &amp; Doubly Linked Lists
+        </button>
+      </div>
+
+      <!-- (a) Stack & Bracket Application -->
+      <div id="ds-stack" class="subview">
+        <div class="layout">
+          <aside class="sidebar">
+            <section class="panel controls-panel">
+              <h2 class="panel-title">Fixed-Capacity Array Stack</h2>
+              <div class="field">
+                <label for="stack-cap" class="field-label">Set Fixed Capacity (1 to 16)</label>
+                <div class="inline-row">
+                  <input type="number" id="stack-cap" class="input" value="6" min="1" max="16" />
+                  <button type="button" id="btn-stack-init" class="btn btn-secondary">Set Capacity</button>
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="stack-val" class="field-label">Element Value</label>
+                <input type="number" id="stack-val" class="input" value="55" />
+              </div>
+
+              <div class="op-grid-2">
+                <button type="button" class="btn btn-primary" data-stack-op="PUSH">push(val)</button>
+                <button type="button" class="btn btn-secondary" data-stack-op="POP">pop()</button>
+                <button type="button" class="btn btn-secondary" data-stack-op="PEEK">peek()</button>
+                <button type="button" class="btn btn-secondary" data-stack-op="SIZE">size()</button>
+                <button type="button" class="btn btn-secondary" data-stack-op="IS_EMPTY">is_empty()</button>
+                <button type="button" class="btn btn-secondary" data-stack-op="IS_FULL">is_full()</button>
+                <button type="button" class="btn btn-secondary span-2" data-stack-op="DISPLAY">display()</button>
+              </div>
+              <p id="stack-error" class="field-error" role="alert" hidden></p>
+            </section>
+
+            <section class="panel controls-panel">
+              <h2 class="panel-title">Stack Application: Bracket Checker</h2>
+              <div class="field">
+                <label for="bracket-expr" class="field-label">Bracket Expression</label>
+                <input type="text" id="bracket-expr" class="input" value="{ ( [ ] ) }" />
+                <div class="preset-row">
+                  <button type="button" class="btn btn-chip" data-bracket-preset="{ ( [ ] ) }">{ ( [ ] ) }</button>
+                  <button type="button" class="btn btn-chip" data-bracket-preset="{ ( [ ) ] }">{ ( [ ) ] }</button>
+                  <button type="button" class="btn btn-chip" data-bracket-preset="((a + b) * [c - d])">Valid Expr</button>
+                  <button type="button" class="btn btn-chip" data-bracket-preset="([{}])()">([{}])()</button>
+                </div>
+              </div>
+              <button type="button" id="btn-bracket-check" class="btn btn-primary">
+                Check Bracket Balance
+              </button>
+            </section>
+          </aside>
+
+          <div class="main">
+            <section class="panel visualizer-panel">
+              <div class="visualizer-header">
+                <h2 class="panel-title">Stack Visualizer (Fixed-Size Array)</h2>
+                <div class="inline-badges">
+                  <span id="stack-meta-badge" class="badge">top = 2 | size = 3 / 6</span>
+                  <span id="stack-time-badge" class="badge">—</span>
+                </div>
+              </div>
+              <div id="stack-status" class="ds-status-banner" role="status">Ready.</div>
+              <div id="stack-canvas" class="ds-canvas"></div>
+            </section>
+
+            <section class="panel method-card">
+              <header class="method-header">
+                <h3>Bracket Balance Evaluation (Stack State After Each Symbol)</h3>
+              </header>
+              <p id="bracket-message" class="info-text">Enter an expression and click "Check Bracket Balance".</p>
+              <div class="table-wrap">
+                <table class="data-table" id="bracket-table">
+                  <thead>
+                    <tr>
+                      <th>Step</th>
+                      <th>Symbol</th>
+                      <th>Stack Operation</th>
+                      <th>Stack After Symbol (Bottom → Top)</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="bracket-tbody"></tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+
+      <!-- (b) Linear & Circular Queue -->
+      <div id="ds-queue" class="subview" hidden>
+        <div class="layout">
+          <aside class="sidebar">
+            <section class="panel controls-panel">
+              <h2 class="panel-title">Queue Controls</h2>
+              <div class="field">
+                <label for="queue-mode" class="field-label">Select Queue Implementation</label>
+                <select id="queue-mode" class="input select">
+                  <option value="LINEAR_QUEUE">(i) Linear Queue (Fixed Array)</option>
+                  <option value="CIRCULAR_QUEUE">(ii) Circular Queue (Fixed Array)</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="queue-cap" class="field-label">Set Fixed Capacity (1 to 14)</label>
+                <div class="inline-row">
+                  <input type="number" id="queue-cap" class="input" value="5" min="1" max="14" />
+                  <button type="button" id="btn-queue-init" class="btn btn-secondary">Set Capacity</button>
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="queue-val" class="field-label">Element Value</label>
+                <input type="number" id="queue-val" class="input" value="60" />
+              </div>
+
+              <div class="op-grid-2">
+                <button type="button" class="btn btn-primary" data-queue-op="ENQUEUE">enqueue(val)</button>
+                <button type="button" class="btn btn-secondary" data-queue-op="DEQUEUE">dequeue()</button>
+                <button type="button" class="btn btn-secondary" data-queue-op="FRONT">front()</button>
+                <button type="button" class="btn btn-secondary" data-queue-op="SIZE">size()</button>
+                <button type="button" class="btn btn-secondary" data-queue-op="IS_EMPTY">is_empty()</button>
+                <button type="button" class="btn btn-secondary" data-queue-op="IS_FULL">is_full()</button>
+                <button type="button" class="btn btn-secondary span-2" data-queue-op="DISPLAY">display()</button>
+              </div>
+
+              <hr class="divider" />
+              <button type="button" id="btn-queue-demo" class="btn btn-secondary">
+                Demonstrate "False Full" / Wrap-Around
+              </button>
+              <p id="queue-error" class="field-error" role="alert" hidden></p>
+            </section>
+
+            <section class="panel info-panel">
+              <h3 class="panel-title">The "False Full" Problem &amp; Circular Solution</h3>
+              <p id="queue-explanation" class="info-text">
+                In a <strong>Linear Queue</strong>, <code>front</code> and <code>rear</code> only move rightward. Once <code>rear == capacity - 1</code>, the queue reports full even if earlier <code>dequeue()</code> calls freed slots <code>0 .. front-1</code>! The <strong>Circular Queue</strong> solves this using modulo arithmetic: <code>rear = (rear + 1) % capacity</code>, wrapping <code>rear</code> around to index <code>0</code>.
+              </p>
+            </section>
+          </aside>
+
+          <div class="main">
+            <section class="panel visualizer-panel">
+              <div class="visualizer-header">
+                <h2 id="queue-vis-title" class="panel-title">Linear Queue Visualizer</h2>
+                <div class="inline-badges">
+                  <span id="queue-meta-badge" class="badge">front = 0 | rear = 2 | size = 3 / 5</span>
+                  <span id="queue-time-badge" class="badge">—</span>
+                </div>
+              </div>
+              <div id="queue-status" class="ds-status-banner" role="status">Ready.</div>
+              <div id="queue-canvas" class="ds-canvas"></div>
+            </section>
+          </div>
+        </div>
+      </div>
+
+      <!-- (c) Singly & Doubly Linked Lists -->
+      <div id="ds-list" class="subview" hidden>
+        <div class="layout">
+          <aside class="sidebar">
+            <section class="panel controls-panel">
+              <h2 class="panel-title">Linked List Controls</h2>
+              <div class="field">
+                <label for="list-mode" class="field-label">Select Linked List Type</label>
+                <select id="list-mode" class="input select">
+                  <option value="SINGLY_LINKED_LIST">(i) Singly Linked List (next only)</option>
+                  <option value="DOUBLY_LINKED_LIST">(ii) Doubly Linked List (prev &amp; next)</option>
+                </select>
+              </div>
+
+              <div class="field-grid-2">
+                <div class="field">
+                  <label for="list-val" class="field-label">New Value</label>
+                  <input type="number" id="list-val" class="input" value="48" />
+                </div>
+                <div class="field">
+                  <label for="list-target" class="field-label">Given Element</label>
+                  <input type="number" id="list-target" class="input" value="24" />
+                </div>
+              </div>
+
+              <h3 class="sub-heading">Insertion Operations</h3>
+              <div class="op-grid-2">
+                <button type="button" class="btn btn-primary btn-sm" data-list-op="INSERT_BEGINNING">Insert Beginning</button>
+                <button type="button" class="btn btn-primary btn-sm" data-list-op="INSERT_END">Insert End</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-list-op="INSERT_BEFORE">Insert Before Given</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-list-op="INSERT_AFTER">Insert After Given</button>
+              </div>
+
+              <h3 class="sub-heading">Deletion Operations</h3>
+              <div class="op-grid-2">
+                <button type="button" class="btn btn-secondary btn-sm" data-list-op="DELETE_BEGINNING">Delete Beginning</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-list-op="DELETE_END">Delete End</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-list-op="DELETE_BEFORE">Delete Before Given</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-list-op="DELETE_AFTER">Delete After Given</button>
+                <button type="button" class="btn btn-secondary btn-sm span-2" data-list-op="DELETE_ELEMENT">Delete Given Element</button>
+              </div>
+
+              <h3 class="sub-heading">Search, Size &amp; Display</h3>
+              <div class="op-grid-2">
+                <button type="button" class="btn btn-secondary btn-sm" data-list-op="SEARCH">Search Given</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-list-op="SIZE">size()</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-list-op="DISPLAY_FORWARD">Display Forward</button>
+                <button type="button" id="btn-list-backward" class="btn btn-secondary btn-sm" data-list-op="DISPLAY_BACKWARD" disabled>
+                  Display Backward
+                </button>
+              </div>
+              <p id="list-error" class="field-error" role="alert" hidden></p>
+            </section>
+          </aside>
+
+          <div class="main">
+            <section class="panel visualizer-panel">
+              <div class="visualizer-header">
+                <h2 id="list-vis-title" class="panel-title">Singly Linked List Visualizer</h2>
+                <div class="inline-badges">
+                  <span id="list-meta-badge" class="badge">size = 3 nodes</span>
+                  <span id="list-time-badge" class="badge">—</span>
+                </div>
+              </div>
+              <div id="list-status" class="ds-status-banner" role="status">Ready.</div>
+              <div id="list-canvas" class="ds-canvas"></div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================================
+         MODULE C: SORTING LAB
+         ===================================================================================== -->
+    <section id="module-c" class="module-view" hidden>
+      <main class="layout">
+        <!-- Left Sidebar -->
+        <aside class="sidebar" aria-label="Sorting Controls">
+          <section class="panel controls-panel">
+            <div class="field">
+              <div class="field-header">
+                <label for="input-data" class="field-label">Input Numbers</label>
+                <div class="inline-row">
+                  <input
+                    type="number"
+                    id="random-count"
+                    class="input input-xs"
+                    value="8"
+                    min="2"
+                    max="16"
+                    title="Number of random elements n (2..16)"
+                    aria-label="Random size n"
+                  />
+                  <button type="button" id="btn-random" class="btn btn-chip">
+                    Generate Random
+                  </button>
+                </div>
+              </div>
+              <textarea
+                id="input-data"
+                class="input"
+                rows="3"
+                spellcheck="false"
+                aria-describedby="input-error"
+              >45, 12, 89, 33, 7, 21, 54, 18</textarea>
+              <p id="input-error" class="field-error" role="alert" hidden></p>
+            </div>
+
+            <div class="field">
+              <label for="algorithm-select" class="field-label">Sorting Algorithm</label>
+              <div class="select-wrap">
+                <select id="algorithm-select" class="input select">
+                  <option value="BUBBLE_SORT">Bubble Sort</option>
+                  <option value="SELECTION_SORT">Selection Sort</option>
+                  <option value="INSERTION_SORT">Insertion Sort</option>
+                  <option value="MERGE_SORT">Merge Sort</option>
+                  <option value="QUICK_SORT" selected>
+                    Quicksort (First-Element Yellow/Green)
+                  </option>
+                  <option value="QUICK_SORT_RANDOM">
+                    Quicksort (Randomised Pivot)
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="checkbox-label">
+                <input type="checkbox" id="chk-pass-only" />
+                Step by Pass / Partition / Merge only
+              </label>
+            </div>
+
+            <div class="actions">
+              <button type="button" id="btn-run" class="btn btn-primary">
+                Run Selected Algorithm
+              </button>
+              <button type="button" id="btn-compare-all" class="btn btn-secondary">
+                Compare All Five Algorithms
+              </button>
+              <button type="button" id="btn-reset-all" class="btn btn-secondary">
+                Reset
               </button>
             </div>
-            <textarea
-              id="input-data"
-              class="input"
-              rows="3"
-              spellcheck="false"
-              aria-describedby="input-error"
-            >
-45, 12, 89, 33, 7, 21, 54, 18</textarea
-            >
-            <p id="input-error" class="field-error" role="alert" hidden></p>
-          </div>
+          </section>
 
-          <div class="field">
-            <label for="algorithm-select" class="field-label">Algorithm</label>
-            <div class="select-wrap">
-              <select id="algorithm-select" class="input select">
-                <option value="BUBBLE_SORT">Bubble Sort</option>
-                <option value="SELECTION_SORT">Selection Sort</option>
-                <option value="INSERTION_SORT">Insertion Sort</option>
-                <option value="MERGE_SORT">Merge Sort (Recursive)</option>
-                <option value="QUICK_SORT" selected>
-                  Quick Sort (Recursive)
-                </option>
-                <option value="HEAP_SORT">Heap Sort</option>
-              </select>
+          <section
+            class="panel complexity-panel"
+            aria-labelledby="complexity-title"
+          >
+            <h2 id="complexity-title" class="panel-title">Complexity &amp; Properties</h2>
+            <dl class="complexity-list">
+              <div class="complexity-row">
+                <dt>Best-Case Time:</dt>
+                <dd id="cx-best">—</dd>
+              </div>
+              <div class="complexity-row">
+                <dt>Average-Case Time:</dt>
+                <dd id="cx-average">—</dd>
+              </div>
+              <div class="complexity-row">
+                <dt>Worst-Case Time:</dt>
+                <dd id="cx-worst">—</dd>
+              </div>
+              <div class="complexity-row">
+                <dt>Extra Space:</dt>
+                <dd id="cx-space">—</dd>
+              </div>
+              <div class="complexity-row">
+                <dt>Stable:</dt>
+                <dd id="cx-stable">—</dd>
+              </div>
+            </dl>
+          </section>
+        </aside>
+
+        <!-- Main Column -->
+        <div class="main">
+          <!-- Sorting Visualizer -->
+          <section
+            class="panel visualizer-panel"
+            aria-labelledby="visualizer-title"
+          >
+            <div class="visualizer-header">
+              <h2 id="visualizer-title" class="panel-title">
+                Sorting Visualizer
+              </h2>
+              <div class="legend-row">
+                <span class="legend-item"><span class="legend-dot dot-active"></span>Compared / Swapped</span>
+                <span class="legend-item"><span class="legend-dot dot-pivot"></span>Pivot</span>
+                <span class="legend-item"><span class="legend-dot dot-yellow"></span>Yellow (&le; pivot)</span>
+                <span class="legend-item"><span class="legend-dot dot-green"></span>Green (&gt; pivot)</span>
+                <span class="legend-item"><span class="legend-dot dot-sorted"></span>Sorted</span>
+              </div>
             </div>
-          </div>
 
-          <div class="field">
-            <label for="structure-select" class="field-label"
-              >Custom Data Structure</label
-            >
-            <div class="select-wrap">
-              <select id="structure-select" class="input select">
-                <option value="CUSTOM_ARRAYLIST" selected>
-                  Custom ArrayList
-                </option>
-                <option value="CUSTOM_LINKEDLIST">Custom LinkedList</option>
-                <option value="CUSTOM_STACK">Custom Stack</option>
-                <option value="CUSTOM_QUEUE">Custom Queue</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="actions">
-            <button type="button" id="btn-run" class="btn btn-primary">
-              Run
-            </button>
-            <button type="button" id="btn-reset-all" class="btn btn-secondary">
-              Reset
-            </button>
-          </div>
-        </section>
-
-        <section
-          class="panel complexity-panel"
-          aria-labelledby="complexity-title"
-        >
-          <h2 id="complexity-title" class="panel-title">Time Complexity</h2>
-          <dl class="complexity-list">
-            <div class="complexity-row">
-              <dt>Worst-Case:</dt>
-              <dd id="cx-worst">—</dd>
-            </div>
-            <div class="complexity-row">
-              <dt>Average-Case:</dt>
-              <dd id="cx-average">—</dd>
-            </div>
-            <div class="complexity-row">
-              <dt>Best-Case:</dt>
-              <dd id="cx-best">—</dd>
-            </div>
-          </dl>
-        </section>
-      </aside>
-
-      <!-- ===================== Main Column ===================== -->
-      <div class="main">
-        <!-- Sorting Visualizer -->
-        <section
-          class="panel visualizer-panel"
-          aria-labelledby="visualizer-title"
-        >
-          <div class="visualizer-header">
-            <h2 id="visualizer-title" class="panel-title">
-              Sorting Visualizer
-            </h2>
-          </div>
-
-          <div id="stage" class="stage">
-            <div id="linear-stage" class="linear-stage">
+            <div id="stage" class="stage">
+              <div id="linear-stage" class="linear-stage">
+                <div
+                  id="array-row"
+                  class="array-row"
+                  role="list"
+                  aria-label="Array elements"
+                ></div>
+                <div
+                  id="pointer-row"
+                  class="pointer-row"
+                  aria-hidden="true"
+                ></div>
+              </div>
               <div
-                id="array-row"
-                class="array-row"
-                role="list"
-                aria-label="Array elements"
-              ></div>
-              <div
-                id="pointer-row"
-                class="pointer-row"
-                aria-hidden="true"
+                id="tree-stage"
+                class="tree-stage"
+                role="group"
+                aria-label="Merge Sort Tree visualization"
+                hidden
               ></div>
             </div>
-            <div
-              id="tree-stage"
-              class="tree-stage"
-              role="group"
-              aria-label="Tree visualization"
-              hidden
-            ></div>
+
+            <p
+              id="step-description"
+              class="step-description"
+              aria-live="polite"
+            ></p>
+
+            <!-- Playback Controls -->
+            <div class="playback" role="toolbar" aria-label="Playback controls">
+              <button
+                type="button"
+                id="btn-first"
+                class="btn btn-icon"
+                title="First step (Home)"
+                aria-label="First step"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M6 5h2.2v14H6z" />
+                  <path d="M19 5.5v13L9.5 12z" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                id="btn-prev"
+                class="btn btn-icon"
+                title="Previous step (←)"
+                aria-label="Previous step"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true" class="icon-stroke">
+                  <path d="M15 18l-6-6 6-6" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                id="btn-play"
+                class="btn btn-icon"
+                title="Auto-play (Space)"
+                aria-label="Auto-play"
+                aria-pressed="false"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true" class="icon-play">
+                  <path d="M7 4.5v15L19.5 12z" />
+                </svg>
+                <svg viewBox="0 0 24 24" aria-hidden="true" class="icon-pause">
+                  <path d="M6.5 5h3.8v14H6.5zM13.7 5h3.8v14h-3.8z" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                id="btn-next"
+                class="btn btn-icon"
+                title="Next step (→)"
+                aria-label="Next step"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true" class="icon-stroke">
+                  <path d="M9 18l6-6-6-6" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                id="btn-last"
+                class="btn btn-icon"
+                title="Last step (End)"
+                aria-label="Last step"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M5 5.5v13l9.5-6.5z" />
+                  <path d="M15.8 5H18v14h-2.2z" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                id="btn-rewind"
+                class="btn btn-text"
+                title="Rewind to step 1"
+              >
+                Reset
+              </button>
+
+              <div class="speed-control">
+                <label for="sort-speed">Speed:</label>
+                <input type="range" id="sort-speed" min="120" max="1200" step="60" value="650" />
+              </div>
+
+              <input
+                type="range"
+                id="progress-slider"
+                class="slider"
+                min="0"
+                max="0"
+                value="0"
+                step="1"
+                aria-label="Step progress"
+              />
+            </div>
+          </section>
+
+          <!-- Metrics Footer -->
+          <section class="metrics" aria-label="Metrics">
+            <article class="panel metric-card">
+              <header class="metric-header">
+                <h3 class="metric-title">Running Time</h3>
+                <span class="metric-tag">Timer</span>
+              </header>
+              <p class="metric-value"><span id="metric-time">—</span></p>
+            </article>
+
+            <article class="panel metric-card">
+              <header class="metric-header">
+                <h3 class="metric-title">Operations Count</h3>
+                <span class="metric-tag">Counters</span>
+              </header>
+              <p class="metric-value metric-value-sm">
+                Comparisons: <span id="metric-comparisons">—</span>
+                <span class="metric-sep" aria-hidden="true">|</span>
+                Swaps/Moves: <span id="metric-swaps">—</span>
+              </p>
+            </article>
+
+            <article class="panel metric-card trace-card">
+              <header class="metric-header">
+                <h3 class="metric-title">Pass / Step Execution Trace</h3>
+                <span class="metric-tag">Log</span>
+              </header>
+              <ol
+                id="trace-log"
+                class="trace-log"
+                aria-label="Execution trace log"
+              ></ol>
+            </article>
+          </section>
+
+          <!-- Compare All Side-by-Side Table -->
+          <section id="compare-all-panel" class="panel method-card" hidden>
+            <header class="method-header">
+              <h3>Compare All Algorithms Side-by-Side (Same Input)</h3>
+              <span id="compare-input-summary" class="badge"></span>
+            </header>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Algorithm</th>
+                    <th>Comparisons</th>
+                    <th>Swaps / Moves</th>
+                    <th>Execution Time</th>
+                    <th>Best Case</th>
+                    <th>Average Case</th>
+                    <th>Worst Case</th>
+                    <th>Extra Space</th>
+                    <th>Stable?</th>
+                  </tr>
+                </thead>
+                <tbody id="compare-all-tbody"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </main>
+    </section>
+
+    <!-- =====================================================================================
+         MODULE D: TIME COMPLEXITY ANALYSIS
+         ===================================================================================== -->
+    <section id="module-d" class="module-view" hidden>
+      <div class="layout">
+        <aside class="sidebar">
+          <section class="panel controls-panel">
+            <h2 class="panel-title">Experimental Benchmark</h2>
+            <p class="info-text">
+              Times all sorting algorithms for <strong>n = 100, 500, 1,000, 2,000, 5,000, 10,000</strong> (plus <strong>50,000 &amp; 100,000</strong> for Merge Sort and Quicksort) on <strong>Random</strong>, <strong>Already Sorted</strong>, and <strong>Reverse Sorted</strong> inputs.
+            </p>
+            <div class="field">
+              <label for="bench-reps" class="field-label">Repetitions per Run (≥ 3)</label>
+              <input type="number" id="bench-reps" class="input" value="3" min="3" max="10" />
+            </div>
+            <div class="field">
+              <label class="checkbox-label">
+                <input type="checkbox" id="bench-large" checked />
+                Include n = 50,000 &amp; 100,000 for Merge Sort &amp; Quicksort
+              </label>
+            </div>
+            <div class="field">
+              <label for="bench-dist-select" class="field-label">Active Input Distribution View</label>
+              <select id="bench-dist-select" class="input select">
+                <option value="RANDOM">Random Input</option>
+                <option value="SORTED">Already Sorted Input</option>
+                <option value="REVERSE_SORTED">Reverse Sorted Input</option>
+              </select>
+            </div>
+            <button type="button" id="btn-bench-run" class="btn btn-primary">
+              Run Full Benchmark Suite
+            </button>
+            <button type="button" id="btn-bench-csv" class="btn btn-secondary" disabled>
+              Export Results as CSV
+            </button>
+          </section>
+
+          <section class="panel info-panel">
+            <h3 class="panel-title">Theoretical vs Experimental Discussion</h3>
+            <ul id="bench-discussion-list" class="discussion-list">
+              <li><strong>Insertion Sort on Sorted Input:</strong> Runs in <code>O(n)</code> time (<code>n − 1</code> comparisons, <code>0</code> shifts) because every element is already ≥ its predecessor.</li>
+              <li><strong>First-Element Quicksort on Sorted Input:</strong> Degrades to <code>O(n²)</code> because the pivot <code>A[lo]</code> is always the smallest (or largest) element, creating unbalanced <code>0</code> and <code>n − 1</code> partitions.</li>
+              <li><strong>Randomised Pivot Fix:</strong> Swapping a random element into <code>A[lo]</code> prevents sorted/reverse-sorted inputs from consistently producing worst-case splits, restoring <code>O(n log n)</code> expected time.</li>
+            </ul>
+          </section>
+        </aside>
+
+        <div class="main">
+          <div id="bench-status" class="ds-status-banner">
+            Click "Run Full Benchmark Suite" to measure all sorting algorithms across n = 100 to 100,000 (3-run average).
           </div>
 
-          <p
-            id="step-description"
-            class="step-description"
-            aria-live="polite"
-          ></p>
+          <div class="cards-grid-2">
+            <section class="panel method-card">
+              <header class="method-header">
+                <h3>O(n²) Sorts: Running Time vs n</h3>
+                <span class="badge">Bubble · Selection · Insertion</span>
+              </header>
+              <div id="chart-quadratic" class="chart-stage"></div>
+            </section>
 
-          <!-- Playback Controls -->
-          <div class="playback" role="toolbar" aria-label="Playback controls">
-            <button
-              type="button"
-              id="btn-first"
-              class="btn btn-icon"
-              title="First step (Home)"
-              aria-label="First step"
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M6 5h2.2v14H6z" />
-                <path d="M19 5.5v13L9.5 12z" />
-              </svg>
-            </button>
-            <button
-              type="button"
-              id="btn-prev"
-              class="btn btn-icon"
-              title="Previous step (←)"
-              aria-label="Previous step"
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true" class="icon-stroke">
-                <path d="M15 18l-6-6 6-6" />
-              </svg>
-            </button>
-            <button
-              type="button"
-              id="btn-play"
-              class="btn btn-icon"
-              title="Auto-play (Space)"
-              aria-label="Auto-play"
-              aria-pressed="false"
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true" class="icon-play">
-                <path d="M7 4.5v15L19.5 12z" />
-              </svg>
-              <svg viewBox="0 0 24 24" aria-hidden="true" class="icon-pause">
-                <path d="M6.5 5h3.8v14H6.5zM13.7 5h3.8v14h-3.8z" />
-              </svg>
-            </button>
-            <button
-              type="button"
-              id="btn-next"
-              class="btn btn-icon"
-              title="Next step (→)"
-              aria-label="Next step"
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true" class="icon-stroke">
-                <path d="M9 18l6-6-6-6" />
-              </svg>
-            </button>
-            <button
-              type="button"
-              id="btn-last"
-              class="btn btn-icon"
-              title="Last step (End)"
-              aria-label="Last step"
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M5 5.5v13l9.5-6.5z" />
-                <path d="M15.8 5H18v14h-2.2z" />
-              </svg>
-            </button>
-            <button
-              type="button"
-              id="btn-rewind"
-              class="btn btn-text"
-              title="Rewind to step 1"
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true" class="icon-stroke">
-                <path d="M3 12a9 9 0 1 0 3-6.7" />
-                <path d="M3 4v5h5" />
-              </svg>
-              Reset
-            </button>
-
-            <input
-              type="range"
-              id="progress-slider"
-              class="slider"
-              min="0"
-              max="0"
-              value="0"
-              step="1"
-              aria-label="Step progress"
-            />
+            <section class="panel method-card">
+              <header class="method-header">
+                <h3>O(n log n) Sorts: Running Time vs n</h3>
+                <span class="badge">Merge · Quicksort (1st) · Quicksort (Rand)</span>
+              </header>
+              <div id="chart-nlogn" class="chart-stage"></div>
+            </section>
           </div>
-        </section>
 
-        <!-- Metrics Footer -->
-        <section class="metrics" aria-label="Metrics">
-          <article class="panel metric-card">
-            <header class="metric-header">
-              <h3 class="metric-title">Running Time</h3>
-              <span class="metric-tag">KPI</span>
+          <section class="panel method-card">
+            <header class="method-header">
+              <h3 id="bench-table-title">Average Running Time (ms) &amp; Operations Table (3 Runs per n)</h3>
+              <span id="bench-reps-badge" class="badge">3-Run Average</span>
             </header>
-            <p class="metric-value"><span id="metric-time">—</span></p>
-          </article>
-
-          <article class="panel metric-card">
-            <header class="metric-header">
-              <h3 class="metric-title">Operations Count</h3>
-              <span class="metric-tag">KPI</span>
-            </header>
-            <p class="metric-value metric-value-sm">
-              Comparisons: <span id="metric-comparisons">—</span>
-              <span class="metric-sep" aria-hidden="true">|</span>
-              Swaps/Shifts: <span id="metric-swaps">—</span>
-            </p>
-          </article>
-
-          <article class="panel metric-card trace-card">
-            <header class="metric-header">
-              <h3 class="metric-title">Execution Trace</h3>
-              <span class="metric-tag">KPI</span>
-            </header>
-            <p id="trace-subtitle" class="metric-subtitle">
-              Custom ArrayList Log
-            </p>
-            <ol
-              id="trace-log"
-              class="trace-log"
-              aria-label="Execution trace log"
-            ></ol>
-          </article>
-        </section>
+            <div class="table-wrap">
+              <table class="data-table" id="bench-table">
+                <thead id="bench-thead"></thead>
+                <tbody id="bench-tbody"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
       </div>
-    </main>
+    </section>
   </body>
 </html>
