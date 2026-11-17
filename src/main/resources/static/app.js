@@ -635,3 +635,187 @@ const manual = (action) => () => {
   pause();
   action();
 };
+/* ==========================================================================
+  * 7. INPUT HANDLING
+  * ========================================================================== */
+
+function parseInput(raw) {
+  const tokens = raw.split(/[\s,;]+/).filter(Boolean);
+
+  if (tokens.length < CONFIG.MIN_ELEMENTS) {
+    return { error: `Enter at least ${CONFIG.MIN_ELEMENTS} numbers, separated by commas.` };
+  }
+  if (tokens.length > CONFIG.MAX_ELEMENTS) {
+    return { error: `Maximum of ${CONFIG.MAX_ELEMENTS} elements (you entered ${tokens.length}).` };
+  }
+
+  const values = [];
+  for (const token of tokens) {
+    if (!/^-?\d+$/.test(token)) return { error: `"${token}" is not a whole number.` };
+    const value = Number(token);
+    if (value < CONFIG.MIN_VALUE || value > CONFIG.MAX_VALUE) {
+      return { error: `Values must be between ${CONFIG.MIN_VALUE} and ${CONFIG.MAX_VALUE}.` };
+    }
+    values.push(value);
+  }
+  return { values };
+}
+
+function showInputError(message) {
+  els.inputError.textContent = message;
+  els.inputError.hidden = false;
+  els.input.classList.add('has-error');
+  els.input.setAttribute('aria-invalid', 'true');
+}
+
+function clearInputError() {
+  els.inputError.hidden = true;
+  els.inputError.textContent = '';
+  els.input.classList.remove('has-error');
+  els.input.removeAttribute('aria-invalid');
+}
+
+function generateRandomArray(size = CONFIG.RANDOM_SIZE, max = CONFIG.RANDOM_MAX) {
+  const pool = Array.from({ length: max }, (_, k) => k + 1);
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  return pool.slice(0, size);
+}
+
+function previewFromInput({ showErrors = false } = {}) {
+  const parsed = parseInput(els.input.value);
+  if (parsed.error) {
+    if (showErrors) showInputError(parsed.error);
+    return;
+  }
+  clearInputError();
+  pause();
+  renderPreview(parsed.values);
+}
+
+function setBusy(busy) {
+  state.isBusy = busy;
+  els.btnRun.disabled = busy;
+  els.btnRun.textContent = busy ? 'Running…' : 'Run';
+}
+
+async function handleRun() {
+  if (state.isBusy) return;
+
+  const parsed = parseInput(els.input.value);
+  if (parsed.error) {
+    showInputError(parsed.error);
+    return;
+  }
+  clearInputError();
+  pause();
+  setBusy(true);
+
+  const algorithm = els.algorithm.value;
+  const dataStructure = els.dataStructure.value;
+
+  try {
+    const raw = await fetchApiData(parsed.values, algorithm, dataStructure);
+    const tracking = normalizeTracking(raw);
+
+    state.tracking = tracking;
+    els.metricTime.textContent = formatRunningTime(tracking.metrics.runningTimeNs);
+    buildTraceLog(tracking.steps);
+    renderStep(0);
+
+    if (CONFIG.AUTOPLAY_ON_RUN) play();
+  } catch (err) {
+    console.error('[Algorithm Explorer] Backend request failed:', err);
+    els.stepDescription.textContent = `Spring Boot server unreachable at ${CONFIG.API_BASE_URL}/sort (${err.message}). Start the Spring Boot app on port 8080 and press Run.`;
+  } finally {
+    setBusy(false);
+  }
+}
+
+function handleResetAll() {
+  pause();
+  els.input.value = DEFAULTS.input;
+  els.algorithm.value = DEFAULTS.algorithm;
+  els.dataStructure.value = DEFAULTS.dataStructure;
+  renderComplexity(DEFAULTS.algorithm);
+  renderTraceSubtitle(DEFAULTS.dataStructure);
+  previewFromInput();
+}
+
+function handleRandom() {
+  els.input.value = generateRandomArray().join(', ');
+  previewFromInput();
+}
+
+function handleKeyboard(event) {
+  if (event.target.closest('input, textarea, select') || !state.tracking) return;
+
+  const actions = {
+    ArrowRight: manual(stepForward),
+    ArrowLeft: manual(stepBackward),
+    Home: manual(() => goToStep(0)),
+    End: manual(() => goToStep(lastStepIndex())),
+    ' ': togglePlay,
+  };
+  const action = actions[event.key];
+  if (action) {
+    event.preventDefault();
+    action();
+  }
+}
+
+/* ==========================================================================
+  * 8. BOOTSTRAP / EVENT WIRING
+  * ========================================================================== */
+
+function debounce(fn, wait) {
+  let id;
+  return (...args) => {
+    clearTimeout(id);
+    id = setTimeout(() => fn(...args), wait);
+  };
+}
+
+function bindEvents() {
+  els.btnRun.addEventListener('click', handleRun);
+  els.btnResetAll.addEventListener('click', handleResetAll);
+  els.btnRandom.addEventListener('click', handleRandom);
+  els.input.addEventListener('input', debounce(() => previewFromInput(), 300));
+  els.input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) handleRun();
+  });
+  els.algorithm.addEventListener('change', () => {
+    renderComplexity(els.algorithm.value);
+    previewFromInput();
+  });
+  els.dataStructure.addEventListener('change', () => {
+    renderTraceSubtitle(els.dataStructure.value);
+    previewFromInput();
+  });
+
+  els.btnFirst.addEventListener('click', manual(() => goToStep(0)));
+  els.btnPrev.addEventListener('click', manual(stepBackward));
+  els.btnPlay.addEventListener('click', togglePlay);
+  els.btnNext.addEventListener('click', manual(stepForward));
+  els.btnLast.addEventListener('click', manual(() => goToStep(lastStepIndex())));
+  els.btnRewind.addEventListener('click', manual(() => goToStep(0)));
+  els.slider.addEventListener('input', manual(() => goToStep(Number(els.slider.value))));
+
+  document.addEventListener('keydown', handleKeyboard);
+  window.addEventListener('resize', debounce(drawTreeEdges, 60));
+}
+
+function init() {
+  cacheElements();
+  bindEvents();
+  renderComplexity(els.algorithm.value);
+  renderTraceSubtitle(els.dataStructure.value);
+  previewFromInput({ showErrors: true });
+}
+
+if (typeof document !== 'undefined') {
+  document.addEventListener('DOMContentLoaded', init);
+}
+
