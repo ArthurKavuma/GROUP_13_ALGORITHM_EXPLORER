@@ -1,10 +1,10 @@
 /* ==========================================================================
-   Algorithm Explorer Stylesheet
-   Group 13 Final DAA Project
+   Algorithm Explorer — Stylesheet
+   Group 13 · Final DAA Project
    Palette: white surfaces, light-grey fills, slate/charcoal text.
    ========================================================================== */
 
-/* --------- 1. Design tokens --------- */
+/* ---------- 1. Design tokens ---------- */
 :root {
   /* Surfaces */
   --c-page: #f4f5f7;
@@ -43,7 +43,7 @@
   --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Consolas, "Liberation Mono", monospace;
 }
 
-/* --------- 2. Base --------- */
+/* ---------- 2. Base ---------- */
 *,
 *::before,
 *::after { box-sizing: border-box; }
@@ -65,7 +65,7 @@ body {
 
 [hidden] { display: none !important; }
 
-/* --------- 3. Header --------- */
+/* ---------- 3. Header ---------- */
 .app-header {
   display: flex;
   align-items: center;
@@ -83,7 +83,7 @@ body {
   letter-spacing: -0.01em;
 }
 
-/* --------- 4. Layout --------- */
+/* ---------- 4. Layout ---------- */
 .layout {
   flex: 1;
   display: grid;
@@ -117,7 +117,7 @@ body {
   letter-spacing: -0.005em;
 }
 
-/* --------- 5. Form controls --------- */
+/* ---------- 5. Form controls ---------- */
 .controls-panel {
   display: flex;
   flex-direction: column;
@@ -196,7 +196,7 @@ textarea.input {
   pointer-events: none;
 }
 
-/* --------- 6. Buttons --------- */
+/* ---------- 6. Buttons ---------- */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -228,7 +228,6 @@ textarea.input {
   background: var(--c-slate);
   box-shadow: var(--shadow-sm);
 }
-
 .btn-primary:hover:not(:disabled) { background: var(--c-slate-hover); }
 
 .btn-secondary {
@@ -236,7 +235,6 @@ textarea.input {
   background: var(--c-fill);
   border-color: var(--c-border);
 }
-
 .btn-secondary:hover:not(:disabled) { background: var(--c-fill-strong); }
 
 .btn-chip {
@@ -245,7 +243,6 @@ textarea.input {
   background: var(--c-fill);
   border-color: var(--c-border);
 }
-
 .btn-chip:hover:not(:disabled) { background: var(--c-fill-strong); }
 
 .actions {
@@ -255,7 +252,7 @@ textarea.input {
   margin-top: 4px;
 }
 
-/* --------- 7. Time complexity --------- */
+/* ---------- 7. Time complexity ---------- */
 .complexity-panel {
   flex: 1;
   padding: 18px;
@@ -277,7 +274,8 @@ textarea.input {
   margin: 0;
   font-variant-numeric: tabular-nums;
 }
-/* --------- 8. Visualizer --------- */
+
+/* ---------- 8. Visualizer ---------- */
 .visualizer-panel {
   display: flex;
   flex-direction: column;
@@ -318,7 +316,8 @@ textarea.input {
   justify-content: center;
   column-gap: 14px;
 }
-/* --------- 8a. Tree visualization (Heap Sort & Merge Sort) --------- */
+
+/* ---------- 8a. Tree visualization (Heap Sort & Merge Sort) ---------- */
 .tree-stage {
   position: relative;
   width: 100%;
@@ -421,6 +420,7 @@ textarea.input {
   background: var(--c-fill);
   border-radius: 4px;
 }
+
 /* Merge Sort: recursion split tree */
 .merge-tree {
   position: relative;
@@ -577,6 +577,7 @@ textarea.input {
   text-align: center;
   color: var(--c-text);
 }
+
 /* ---------- 9. Playback ---------- */
 .playback {
   display: flex;
@@ -585,6 +586,7 @@ textarea.input {
   padding: 14px 18px;
   border-top: 1px solid var(--c-border);
 }
+
 .btn-icon,
 .btn-text {
   height: 38px;
@@ -592,16 +594,20 @@ textarea.input {
   background: var(--c-fill);
   border-color: var(--c-border-strong);
 }
+
 .btn-icon { width: 38px; padding: 0; }
 .btn-text { padding: 0 13px; }
+
 .btn-icon:hover:not(:disabled),
 .btn-text:hover:not(:disabled) { background: var(--c-fill-strong); }
+
 .btn-icon svg,
 .btn-text svg {
   width: 16px;
   height: 16px;
   fill: currentColor;
 }
+
 .btn svg.icon-stroke {
   fill: none;
   stroke: currentColor;
@@ -609,7 +615,9 @@ textarea.input {
   stroke-linecap: round;
   stroke-linejoin: round;
 }
+
 .btn-text svg.icon-stroke { width: 14px; height: 14px; }
+
 #btn-play .icon-pause { display: none; }
 #btn-play.is-playing .icon-play { display: none; }
 #btn-play.is-playing .icon-pause { display: block; }
@@ -621,14 +629,16 @@ textarea.input {
   min-width: 80px;
   height: 6px;
   margin: 0 4px 0 14px;
-  background: linear-gradient(to right, var(--c-slate) 0 var(--progress), #e3ebea var(--progress) 100%);
+  background: linear-gradient(to right, var(--c-slate) 0 var(--progress), #e3e6ea var(--progress) 100%);
   border-radius: 999px;
   outline: none;
   cursor: pointer;
   -webkit-appearance: none;
   appearance: none;
 }
+
 .slider:disabled { cursor: not-allowed; opacity: 0.6; }
+
 .slider::-webkit-slider-thumb {
   width: 18px;
   height: 18px;
@@ -640,6 +650,7 @@ textarea.input {
   -webkit-appearance: none;
   appearance: none;
 }
+
 .slider::-moz-range-thumb {
   width: 18px;
   height: 18px;
@@ -648,10 +659,13 @@ textarea.input {
   border-radius: 50%;
   box-shadow: 0 1px 3px rgba(16, 24, 40, 0.2);
 }
+
 .slider::-moz-range-track { background: transparent; }
+
 .slider:not(:disabled):hover::-webkit-slider-thumb { transform: scale(1.08); }
 .slider:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px rgba(68, 77, 92, 0.18); }
 .slider:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 4px rgba(68, 77, 92, 0.18); }
+
 /* ---------- 10. Metrics footer ---------- */
 .metrics {
   display: grid;
@@ -751,6 +765,7 @@ textarea.input {
   border: 2px solid var(--c-surface-muted);
   border-radius: 8px;
 }
+
 /* ---------- 11. Responsive ---------- */
 @media (max-width: 1180px) {
   .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -771,3 +786,4 @@ textarea.input {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; }
 }
+

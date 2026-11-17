@@ -1,259 +1,286 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Algorithm Explorer step-by-step sorting algorithm visualizer." />
-  <title>Algorithm Explorer</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
-  <script src="app.js" defer></script>
-</head>
-<body>
-  <!-- ===================== Header ===================== -->
-  <header class="app-header">
-    <h1 class="app-title">Algorithm Explorer</h1>
-  </header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Algorithm Explorer — step-by-step sorting algorithm visualizer."
+    />
+    <title>Algorithm Explorer</title>
 
-  <main class="layout">
-    <!-- ===================== Left Sidebar ===================== -->
-    <aside class="sidebar" aria-label="Controls">
-      <section class="panel controls-panel">
-        <div class="field">
-          <div class="field-header">
-            <label for="input-data" class="field-label">Input Data</label>
-            <button type="button" id="btn-random" class="btn btn-chip">
-              Generate Random
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <!-- ===================== Header ===================== -->
+    <header class="app-header">
+      <h1 class="app-title">Algorithm Explorer</h1>
+    </header>
+
+    <main class="layout">
+      <!-- ===================== Left Sidebar ===================== -->
+      <aside class="sidebar" aria-label="Controls">
+        <section class="panel controls-panel">
+          <div class="field">
+            <div class="field-header">
+              <label for="input-data" class="field-label">Input Data</label>
+              <button type="button" id="btn-random" class="btn btn-chip">
+                Generate Random
+              </button>
+            </div>
+            <textarea
+              id="input-data"
+              class="input"
+              rows="3"
+              spellcheck="false"
+              aria-describedby="input-error"
+            >
+45, 12, 89, 33, 7, 21, 54, 18</textarea
+            >
+            <p id="input-error" class="field-error" role="alert" hidden></p>
+          </div>
+
+          <div class="field">
+            <label for="algorithm-select" class="field-label">Algorithm</label>
+            <div class="select-wrap">
+              <select id="algorithm-select" class="input select">
+                <option value="BUBBLE_SORT">Bubble Sort</option>
+                <option value="SELECTION_SORT">Selection Sort</option>
+                <option value="INSERTION_SORT">Insertion Sort</option>
+                <option value="MERGE_SORT">Merge Sort (Recursive)</option>
+                <option value="QUICK_SORT" selected>
+                  Quick Sort (Recursive)
+                </option>
+                <option value="HEAP_SORT">Heap Sort</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="structure-select" class="field-label"
+              >Custom Data Structure</label
+            >
+            <div class="select-wrap">
+              <select id="structure-select" class="input select">
+                <option value="CUSTOM_ARRAYLIST" selected>
+                  Custom ArrayList
+                </option>
+                <option value="CUSTOM_LINKEDLIST">Custom LinkedList</option>
+                <option value="CUSTOM_STACK">Custom Stack</option>
+                <option value="CUSTOM_QUEUE">Custom Queue</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button type="button" id="btn-run" class="btn btn-primary">
+              Run
+            </button>
+            <button type="button" id="btn-reset-all" class="btn btn-secondary">
+              Reset
             </button>
           </div>
-          <textarea
-            id="input-data"
-            class="input"
-            rows="3"
-            spellcheck="false"
-            aria-describedby="input-error"
-          >45, 12, 89, 33, 7, 21, 54, 18</textarea>
-          <p id="input-error" class="field-error" role="alert" hidden></p>
-        </div>
+        </section>
 
-        <div class="field">
-          <label for="algorithm-select" class="field-label">Algorithm</label>
-          <div class="select-wrap">
-            <select id="algorithm-select" class="input select">
-              <option value="BUBBLE_SORT">Bubble Sort</option>
-              <option value="SELECTION_SORT">Selection Sort</option>
-              <option value="INSERTION_SORT">Insertion Sort</option>
-              <option value="MERGE_SORT">Merge Sort (Recursive)</option>
-              <option value="QUICK_SORT" selected>Quick Sort (Recursive)</option>
-              <option value="HEAP_SORT">Heap Sort</option>
-            </select>
-          </div>
-        </div>
+        <section
+          class="panel complexity-panel"
+          aria-labelledby="complexity-title"
+        >
+          <h2 id="complexity-title" class="panel-title">Time Complexity</h2>
+          <dl class="complexity-list">
+            <div class="complexity-row">
+              <dt>Worst-Case:</dt>
+              <dd id="cx-worst">—</dd>
+            </div>
+            <div class="complexity-row">
+              <dt>Average-Case:</dt>
+              <dd id="cx-average">—</dd>
+            </div>
+            <div class="complexity-row">
+              <dt>Best-Case:</dt>
+              <dd id="cx-best">—</dd>
+            </div>
+          </dl>
+        </section>
+      </aside>
 
-        <div class="field">
-          <label for="structure-select" class="field-label">Custom Data Structure</label>
-          <div class="select-wrap">
-            <select id="structure-select" class="input select">
-              <option value="CUSTOM_ARRAYLIST" selected>Custom ArrayList</option>
-              <option value="CUSTOM_LINKEDLIST">Custom LinkedList</option>
-              <option value="CUSTOM_STACK">Custom Stack</option>
-              <option value="CUSTOM_QUEUE">Custom Queue</option>
-            </select>
+      <!-- ===================== Main Column ===================== -->
+      <div class="main">
+        <!-- Sorting Visualizer -->
+        <section
+          class="panel visualizer-panel"
+          aria-labelledby="visualizer-title"
+        >
+          <div class="visualizer-header">
+            <h2 id="visualizer-title" class="panel-title">
+              Sorting Visualizer
+            </h2>
           </div>
-        </div>
 
-        <div class="actions">
-          <button type="button" id="btn-run" class="btn btn-primary">
-            Run
-          </button>
-          <button type="button" id="btn-reset-all" class="btn btn-secondary">
-            Reset
-          </button>
-        </div>
-      </section>
+          <div id="stage" class="stage">
+            <div id="linear-stage" class="linear-stage">
+              <div
+                id="array-row"
+                class="array-row"
+                role="list"
+                aria-label="Array elements"
+              ></div>
+              <div
+                id="pointer-row"
+                class="pointer-row"
+                aria-hidden="true"
+              ></div>
+            </div>
+            <div
+              id="tree-stage"
+              class="tree-stage"
+              role="group"
+              aria-label="Tree visualization"
+              hidden
+            ></div>
+          </div>
 
-      <section class="panel complexity-panel" aria-labelledby="complexity-title">
-        <h2 id="complexity-title" class="panel-title">Time Complexity</h2>
-        <dl class="complexity-list">
-          <div class="complexity-row">
-            <dt>Worst-Case:</dt>
-            <dd id="cx-worst">-</dd>
-          </div>
-          <div class="complexity-row">
-            <dt>Average-Case:</dt>
-            <dd id="cx-average">-</dd>
-          </div>
-          <div class="complexity-row">
-            <dt>Best-Case:</dt>
-            <dd id="cx-best">-</dd>
-          </div>
-        </dl>
-      </section>
-    </aside>
+          <p
+            id="step-description"
+            class="step-description"
+            aria-live="polite"
+          ></p>
 
-    <!-- ===================== Main Column ===================== -->
-<div class="main">
-  <!-- Sorting Visualizer -->
-  <section class="panel visualizer-panel" aria-labelledby="visualizer-title">
-    <div class="visualizer-header">
-      <h2 id="visualizer-title" class="panel-title">
-        Sorting Visualizer
-      </h2>
-    </div>
-    <div id="stage" class="stage">
-      <div id="linear-stage" class="linear-stage">
-        <div
-          id="array-row"
-          class="array-row"
-          role="list"
-          aria-label="Array elements"
-        ></div>
-        <div
-          id="pointer-row"
-          class="pointer-row"
-          aria-hidden="true"
-        ></div>
+          <!-- Playback Controls -->
+          <div class="playback" role="toolbar" aria-label="Playback controls">
+            <button
+              type="button"
+              id="btn-first"
+              class="btn btn-icon"
+              title="First step (Home)"
+              aria-label="First step"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6 5h2.2v14H6z" />
+                <path d="M19 5.5v13L9.5 12z" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              id="btn-prev"
+              class="btn btn-icon"
+              title="Previous step (←)"
+              aria-label="Previous step"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true" class="icon-stroke">
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              id="btn-play"
+              class="btn btn-icon"
+              title="Auto-play (Space)"
+              aria-label="Auto-play"
+              aria-pressed="false"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true" class="icon-play">
+                <path d="M7 4.5v15L19.5 12z" />
+              </svg>
+              <svg viewBox="0 0 24 24" aria-hidden="true" class="icon-pause">
+                <path d="M6.5 5h3.8v14H6.5zM13.7 5h3.8v14h-3.8z" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              id="btn-next"
+              class="btn btn-icon"
+              title="Next step (→)"
+              aria-label="Next step"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true" class="icon-stroke">
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              id="btn-last"
+              class="btn btn-icon"
+              title="Last step (End)"
+              aria-label="Last step"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M5 5.5v13l9.5-6.5z" />
+                <path d="M15.8 5H18v14h-2.2z" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              id="btn-rewind"
+              class="btn btn-text"
+              title="Rewind to step 1"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true" class="icon-stroke">
+                <path d="M3 12a9 9 0 1 0 3-6.7" />
+                <path d="M3 4v5h5" />
+              </svg>
+              Reset
+            </button>
+
+            <input
+              type="range"
+              id="progress-slider"
+              class="slider"
+              min="0"
+              max="0"
+              value="0"
+              step="1"
+              aria-label="Step progress"
+            />
+          </div>
+        </section>
+
+        <!-- Metrics Footer -->
+        <section class="metrics" aria-label="Metrics">
+          <article class="panel metric-card">
+            <header class="metric-header">
+              <h3 class="metric-title">Running Time</h3>
+              <span class="metric-tag">KPI</span>
+            </header>
+            <p class="metric-value"><span id="metric-time">—</span></p>
+          </article>
+
+          <article class="panel metric-card">
+            <header class="metric-header">
+              <h3 class="metric-title">Operations Count</h3>
+              <span class="metric-tag">KPI</span>
+            </header>
+            <p class="metric-value metric-value-sm">
+              Comparisons: <span id="metric-comparisons">—</span>
+              <span class="metric-sep" aria-hidden="true">|</span>
+              Swaps/Shifts: <span id="metric-swaps">—</span>
+            </p>
+          </article>
+
+          <article class="panel metric-card trace-card">
+            <header class="metric-header">
+              <h3 class="metric-title">Execution Trace</h3>
+              <span class="metric-tag">KPI</span>
+            </header>
+            <p id="trace-subtitle" class="metric-subtitle">
+              Custom ArrayList Log
+            </p>
+            <ol
+              id="trace-log"
+              class="trace-log"
+              aria-label="Execution trace log"
+            ></ol>
+          </article>
+        </section>
       </div>
-      <div
-        id="tree-stage"
-        class="tree-stage"
-        role="group"
-        aria-label="Tree visualization"
-        hidden
-      ></div>
-    </div>
-    <p
-      id="step-description"
-      class="step-description"
-      aria-live="polite"
-    ></p>
-    <!-- Playback Controls -->
-<div class="playback" role="toolbar" aria-label="Playback controls">
-  <button
-    type="button"
-    id="btn-first"
-    class="btn btn-icon"
-    title="First step (Home)"
-    aria-label="First step"
-  >
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M6 5h2.2v14H6z" />
-      <path d="M19 5.5v13L9.5 12z" />
-    </svg>
-  </button>
-  <button
-    type="button"
-    id="btn-prev"
-    class="btn btn-icon"
-    title="Previous step (←)"
-    aria-label="Previous step"
-  >
-    <svg viewBox="0 0 24 24" aria-hidden="true" class="icon-stroke">
-      <path d="M15 18l-6-6 6-6" />
-    </svg>
-  </button>
-  <button
-    type="button"
-    id="btn-play"
-    class="btn btn-icon"
-    title="Auto-play (Space)"
-    aria-label="Auto-play"
-    aria-pressed="false"
-  >
-    <svg viewBox="0 0 24 24" aria-hidden="true" class="icon-play">
-      <path d="M7 4.5v15L19.5 12z" />
-    </svg>
-    <svg viewBox="0 0 24 24" aria-hidden="true" class="icon-pause">
-      <path d="M6.5 5h3.8v14H6.5zM13.7 5h3.8v14h-3.8z" />
-    </svg>
-  </button>
-  <button
-    type="button"
-    id="btn-next"
-    class="btn btn-icon"
-    title="Next step (→)"
-    aria-label="Next step"
-  >
-    <svg viewBox="0 0 24 24" aria-hidden="true" class="icon-stroke">
-      <path d="M9 18l6-6-6-6" />
-    </svg>
-  </button>
-  <button
-    type="button"
-    id="btn-last"
-    class="btn btn-icon"
-    title="Last step (End)"
-    aria-label="Last step"
-  >
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M5 5.5v13l9.5-6.5z" />
-      <path d="M15.8 5H18v14h-2.2z" />
-    </svg>
-  </button>
-  <button
-    type="button"
-    id="btn-rewind"
-    class="btn btn-text"
-    title="Rewind to step 1"
-  >
-    <svg viewBox="0 0 24 24" aria-hidden="true" class="icon-stroke">
-      <path d="M3 12a9 9 0 103-6.7" />
-      <path d="M3 4v5h5" />
-    </svg>
-    Reset
-  </button>
-  <input
-    type="range"
-    id="progress-slider"
-    class="slider"
-    min="0"
-    max="0"
-    value="0"
-    step="1"
-    aria-label="Step progress"
-  />
-</div>
-  </section>
-  <!-- Metrics Footer -->
-    <section class="metrics" aria-label="Metrics">
-      <article class="panel metric-card">
-        <header class="metric-header">
-          <h3 class="metric-title">Running Time</h3>
-          <span class="metric-tag">KPI</span>
-        </header>
-        <p class="metric-value"><span id="metric-time">—</span></p>
-      </article>
-
-      <article class="panel metric-card">
-        <header class="metric-header">
-          <h3 class="metric-title">Operations Count</h3>
-          <span class="metric-tag">KPI</span>
-        </header>
-        <p class="metric-value metric-value-sm">
-          Comparisons: <span id="metric-comparisons">—</span>
-          <span class="metric-sep" aria-hidden="true">|</span>
-          Swaps/Shifts: <span id="metric-swaps">—</span>
-        </p>
-      </article>
-
-      <article class="panel metric-card trace-card">
-        <header class="metric-header">
-          <h3 class="metric-title">Execution Trace</h3>
-          <span class="metric-tag">KPI</span>
-        </header>
-        <p id="trace-subtitle" class="metric-subtitle">
-          Custom ArrayList Log
-        </p>
-        <ol
-          id="trace-log"
-          class="trace-log"
-          aria-label="Execution trace log"
-        ></ol>
-      </article>
-    </section>
-</div>
-  </main>
-</body>
+    </main>
+  </body>
 </html>

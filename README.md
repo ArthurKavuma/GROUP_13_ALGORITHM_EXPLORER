@@ -133,7 +133,7 @@ All algorithms reside in `com.group13.algorithmexplorer.algorithms`:
 ### Step 1: Clone the Repository
 
 ```bash
-git clone [https://github.com/ArthurKavuma/GROUP_13_ALGORITHM_EXPLORER.git](https://github.com/ArthurKavuma/GROUP_13_ALGORITHM_EXPLORER.git)
+git clone https://github.com/ArthurKavuma/GROUP_13_ALGORITHM_EXPLORER.git
 cd GROUP_13_ALGORITHM_EXPLORER
 ```
 
@@ -231,3 +231,4 @@ GROUP_13_ALGORITHM_EXPLORER/
         `-- java/com/group13/algorithmexplorer/
             `-- AlgorithmExplorerTests.java
 ```
+
