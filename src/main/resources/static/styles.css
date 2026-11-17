@@ -577,3 +577,177 @@ textarea.input {
   text-align: center;
   color: var(--c-text);
 }
+/* ---------- 9. Playback ---------- */
+.playback {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 18px;
+  border-top: 1px solid var(--c-border);
+}
+.btn-icon,
+.btn-text {
+  height: 38px;
+  color: var(--c-slate);
+  background: var(--c-fill);
+  border-color: var(--c-border-strong);
+}
+.btn-icon { width: 38px; padding: 0; }
+.btn-text { padding: 0 13px; }
+.btn-icon:hover:not(:disabled),
+.btn-text:hover:not(:disabled) { background: var(--c-fill-strong); }
+.btn-icon svg,
+.btn-text svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+.btn svg.icon-stroke {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.btn-text svg.icon-stroke { width: 14px; height: 14px; }
+#btn-play .icon-pause { display: none; }
+#btn-play.is-playing .icon-play { display: none; }
+#btn-play.is-playing .icon-pause { display: block; }
+
+/* Progress slider */
+.slider {
+  --progress: 0%;
+  flex: 1;
+  min-width: 80px;
+  height: 6px;
+  margin: 0 4px 0 14px;
+  background: linear-gradient(to right, var(--c-slate) 0 var(--progress), #e3ebea var(--progress) 100%);
+  border-radius: 999px;
+  outline: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.slider:disabled { cursor: not-allowed; opacity: 0.6; }
+.slider::-webkit-slider-thumb {
+  width: 18px;
+  height: 18px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border-strong);
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.2);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border-strong);
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.2);
+}
+.slider::-moz-range-track { background: transparent; }
+.slider:not(:disabled):hover::-webkit-slider-thumb { transform: scale(1.08); }
+.slider:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px rgba(68, 77, 92, 0.18); }
+.slider:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 4px rgba(68, 77, 92, 0.18); }
+/* ---------- 10. Metrics footer ---------- */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.metric-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 136px;
+  padding: 16px 18px;
+}
+
+.metric-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.metric-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.metric-tag {
+  font-size: 13px;
+  color: var(--c-text-muted);
+}
+
+.metric-value {
+  margin: auto 0;
+  padding-top: 12px;
+  font-size: 17px;
+  font-variant-numeric: tabular-nums;
+}
+
+.metric-value-sm { font-size: 14px; }
+
+.metric-sep {
+  margin: 0 4px;
+  color: var(--c-text-subtle);
+}
+
+.metric-subtitle {
+  margin: 2px 0 10px;
+  font-size: 12.5px;
+  color: var(--c-text-muted);
+}
+
+/* Execution trace log */
+.trace-log {
+  flex: 1;
+  min-height: 84px;
+  max-height: 110px;
+  margin: 0;
+  padding: 6px 10px;
+  overflow-y: auto;
+  list-style: none;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  line-height: 1.6;
+  background: var(--c-surface-muted);
+  border: 1px solid var(--c-border-strong);
+  border-radius: var(--radius-sm);
+}
+
+.trace-entry {
+  display: flex;
+  gap: 8px;
+  color: var(--c-text-muted);
+  white-space: nowrap;
+}
+
+.trace-entry.is-current {
+  color: var(--c-text);
+  font-weight: 500;
+}
+
+.trace-index {
+  flex-shrink: 0;
+  color: var(--c-text-subtle);
+}
+
+.trace-empty {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--c-text-subtle);
+}
+
+/* Thin, quiet scrollbar for the log */
+.trace-log::-webkit-scrollbar { width: 8px; }
+.trace-log::-webkit-scrollbar-thumb {
+  background: #cfd4da;
+  border: 2px solid var(--c-surface-muted);
+  border-radius: 8px;
+}

@@ -129,34 +129,130 @@
       class="step-description"
       aria-live="polite"
     ></p>
-    <!-- Playback controls -->
-<div class="controls-bar">
-  <button id="btn-first" type="button">⏮ First</button>
-  <button id="btn-prev" type="button">◀ Prev</button>
-  <button id="btn-play" type="button">▶ Play</button>
-  <button id="btn-next" type="button">Next ▶</button>
-  <button id="btn-last" type="button">Last ⏭</button>
-  <button id="btn-rewind" type="button">↺ Rewind</button>
-</div>
-
-<!-- Progress -->
-<div class="progress-row">
-  <label for="progress-slider">Step</label>
-  <input id="progress-slider" type="range" min="0" max="0" value="0" step="1">
-</div>
-
-<!-- Metrics -->
-<div class="metrics-row">
-  <span>Time: <span id="metric-time">-</span></span>
-  <span>Comparisons: <span id="metric-comparisons">-</span></span>
-  <span>Swaps: <span id="metric-swaps">-</span></span>
+    <!-- Playback Controls -->
+<div class="playback" role="toolbar" aria-label="Playback controls">
+  <button
+    type="button"
+    id="btn-first"
+    class="btn btn-icon"
+    title="First step (Home)"
+    aria-label="First step"
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M6 5h2.2v14H6z" />
+      <path d="M19 5.5v13L9.5 12z" />
+    </svg>
+  </button>
+  <button
+    type="button"
+    id="btn-prev"
+    class="btn btn-icon"
+    title="Previous step (←)"
+    aria-label="Previous step"
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true" class="icon-stroke">
+      <path d="M15 18l-6-6 6-6" />
+    </svg>
+  </button>
+  <button
+    type="button"
+    id="btn-play"
+    class="btn btn-icon"
+    title="Auto-play (Space)"
+    aria-label="Auto-play"
+    aria-pressed="false"
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true" class="icon-play">
+      <path d="M7 4.5v15L19.5 12z" />
+    </svg>
+    <svg viewBox="0 0 24 24" aria-hidden="true" class="icon-pause">
+      <path d="M6.5 5h3.8v14H6.5zM13.7 5h3.8v14h-3.8z" />
+    </svg>
+  </button>
+  <button
+    type="button"
+    id="btn-next"
+    class="btn btn-icon"
+    title="Next step (→)"
+    aria-label="Next step"
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true" class="icon-stroke">
+      <path d="M9 18l6-6-6-6" />
+    </svg>
+  </button>
+  <button
+    type="button"
+    id="btn-last"
+    class="btn btn-icon"
+    title="Last step (End)"
+    aria-label="Last step"
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M5 5.5v13l9.5-6.5z" />
+      <path d="M15.8 5H18v14h-2.2z" />
+    </svg>
+  </button>
+  <button
+    type="button"
+    id="btn-rewind"
+    class="btn btn-text"
+    title="Rewind to step 1"
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true" class="icon-stroke">
+      <path d="M3 12a9 9 0 103-6.7" />
+      <path d="M3 4v5h5" />
+    </svg>
+    Reset
+  </button>
+  <input
+    type="range"
+    id="progress-slider"
+    class="slider"
+    min="0"
+    max="0"
+    value="0"
+    step="1"
+    aria-label="Step progress"
+  />
 </div>
   </section>
-  <!-- Trace log -->
-<section class="panel trace-panel">
-  <h3 id="trace-subtitle" class="panel-title">Trace</h3>
-  <div id="trace-log" class="trace-log"></div>
-</section>
+  <!-- Metrics Footer -->
+    <section class="metrics" aria-label="Metrics">
+      <article class="panel metric-card">
+        <header class="metric-header">
+          <h3 class="metric-title">Running Time</h3>
+          <span class="metric-tag">KPI</span>
+        </header>
+        <p class="metric-value"><span id="metric-time">—</span></p>
+      </article>
+
+      <article class="panel metric-card">
+        <header class="metric-header">
+          <h3 class="metric-title">Operations Count</h3>
+          <span class="metric-tag">KPI</span>
+        </header>
+        <p class="metric-value metric-value-sm">
+          Comparisons: <span id="metric-comparisons">—</span>
+          <span class="metric-sep" aria-hidden="true">|</span>
+          Swaps/Shifts: <span id="metric-swaps">—</span>
+        </p>
+      </article>
+
+      <article class="panel metric-card trace-card">
+        <header class="metric-header">
+          <h3 class="metric-title">Execution Trace</h3>
+          <span class="metric-tag">KPI</span>
+        </header>
+        <p id="trace-subtitle" class="metric-subtitle">
+          Custom ArrayList Log
+        </p>
+        <ol
+          id="trace-log"
+          class="trace-log"
+          aria-label="Execution trace log"
+        ></ol>
+      </article>
+    </section>
 </div>
   </main>
 </body>
