@@ -1,8 +1,9 @@
 package com.group13.algorithmexplorer.dto;
 
 /**
- * Immutable snapshot of one step in the sorting visualization.
- * Mirrors the {@code Step} contract in {@code app.js}.
+ * Immutable snapshot of one step in the Module C sorting visualization.
+ * Supports pass/merge/partition step boundaries as well as fine-grained comparison/swap highlighting
+ * and Quicksort "yellow/green" partition regions.
  */
 public class StepDto {
 
@@ -13,6 +14,9 @@ public class StepDto {
     private int[] active;
     private Integer pivot;
     private int[] sorted;
+    private int[] yellow;
+    private int[] green;
+    private boolean passBoundary;
     private int comparisons;
     private int swaps;
     private MergeTreeDto mergeTree;
@@ -32,6 +36,38 @@ public class StepDto {
         int swaps,
         MergeTreeDto mergeTree
     ) {
+        this(
+            array,
+            description,
+            trace,
+            pointers,
+            active,
+            pivot,
+            sorted,
+            new int[0],
+            new int[0],
+            false,
+            comparisons,
+            swaps,
+            mergeTree
+        );
+    }
+
+    public StepDto(
+        int[] array,
+        String description,
+        String trace,
+        PointerDto[] pointers,
+        int[] active,
+        Integer pivot,
+        int[] sorted,
+        int[] yellow,
+        int[] green,
+        boolean passBoundary,
+        int comparisons,
+        int swaps,
+        MergeTreeDto mergeTree
+    ) {
         this.array = array;
         this.description = description;
         this.trace = trace;
@@ -39,6 +75,9 @@ public class StepDto {
         this.active = active != null ? active : new int[0];
         this.pivot = pivot;
         this.sorted = sorted != null ? sorted : new int[0];
+        this.yellow = yellow != null ? yellow : new int[0];
+        this.green = green != null ? green : new int[0];
+        this.passBoundary = passBoundary;
         this.comparisons = comparisons;
         this.swaps = swaps;
         this.mergeTree = mergeTree;
@@ -100,6 +139,30 @@ public class StepDto {
         this.sorted = sorted;
     }
 
+    public int[] getYellow() {
+        return yellow;
+    }
+
+    public void setYellow(int[] yellow) {
+        this.yellow = yellow;
+    }
+
+    public int[] getGreen() {
+        return green;
+    }
+
+    public void setGreen(int[] green) {
+        this.green = green;
+    }
+
+    public boolean isPassBoundary() {
+        return passBoundary;
+    }
+
+    public void setPassBoundary(boolean passBoundary) {
+        this.passBoundary = passBoundary;
+    }
+
     public int getComparisons() {
         return comparisons;
     }
@@ -124,4 +187,3 @@ public class StepDto {
         this.mergeTree = mergeTree;
     }
 }
-
