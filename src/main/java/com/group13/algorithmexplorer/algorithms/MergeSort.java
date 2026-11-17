@@ -10,10 +10,18 @@ import static com.group13.algorithmexplorer.algorithms.StepTracker.ptr;
 import static com.group13.algorithmexplorer.algorithms.StepTracker.range;
 
 /**
- * Recursive Divide-and-Conquer Merge Sort operating on {@code CustomList<Integer>} via {@link StepTracker}.
- * Populates {@link MergeTreeDto} on every step so the frontend's SVG Merge Tree visualizer
- * renders the full recursion tree with node states ({@code "focus"}, {@code "split"}, {@code "merged"}, {@code "pending"}).
- * Zero built-in collection imports.
+ * Recursive Divide-and-Conquer Merge Sort implementation from first principles.
+ * <p>
+ * Recursively splits the array in half until single-element subarrays are reached, then merges
+ * adjacent sorted halves using an auxiliary temporary array.
+ * </p>
+ * <ul>
+ *   <li><b>Best-Case Time Complexity:</b> O(n log n)</li>
+ *   <li><b>Average-Case Time Complexity:</b> O(n log n)</li>
+ *   <li><b>Worst-Case Time Complexity:</b> O(n log n)</li>
+ *   <li><b>Extra Space Complexity:</b> O(n) auxiliary array + O(log n) recursion stack</li>
+ *   <li><b>Stability:</b> Stable (picks from left subarray when {@code left[i] <= right[j]})</li>
+ * </ul>
  */
 public class MergeSort {
 
@@ -34,6 +42,12 @@ public class MergeSort {
         }
     }
 
+    /**
+     * Sorts the array tracked by {@code r} in ascending order using Merge Sort.
+     * Records divide steps, element-by-element merge moves, and completed merge boundaries.
+     *
+     * @param r step tracker holding the array and operation counters
+     */
     public void sort(StepTracker r) {
         int n = r.size();
         if (n <= 1) {
@@ -49,7 +63,6 @@ public class MergeSort {
 
         mergeSort(r, 0, n - 1, nodes);
 
-        // Mark all interval nodes as merged for the final step
         for (int i = 0; i < nodes.size(); i++) {
             IntervalNode node = nodes.get(i);
             node.values = slice(r, node.lo, node.hi);
@@ -68,7 +81,7 @@ public class MergeSort {
         String initialStatus = depth == 0 ? "focus" : "pending";
         nodes.add(new IntervalNode(lo, hi, slice(r, lo, hi), initialStatus));
         if (lo < hi) {
-            int mid = (lo + hi) / 2;
+            int mid = lo + (hi - lo) / 2;
             buildIntervals(r, lo, mid, depth + 1, nodes);
             buildIntervals(r, mid + 1, hi, depth + 1, nodes);
         }
@@ -86,7 +99,7 @@ public class MergeSort {
             return;
         }
 
-        int mid = (lo + hi) / 2;
+        int mid = lo + (hi - lo) / 2;
         String leftId = lo + "-" + mid;
         String rightId = (mid + 1) + "-" + hi;
 
@@ -97,7 +110,7 @@ public class MergeSort {
         int[] spanIndices = range(lo, hi);
         r.record(
             "Dividing [" + lo + ".." + hi + "] into [" + lo + ".." + mid + "] and [" + (mid + 1) + ".." + hi + "]",
-            "Split [" + lo + ".." + hi + "] at " + mid,
+            "Split [" + lo + ".." + hi + "] at mid=" + mid,
             new PointerDto[] { ptr(lo, "lo"), ptr(mid, "mid"), ptr(hi, "hi") },
             spanIndices,
             null,
@@ -127,12 +140,10 @@ public class MergeSort {
         while (i < left.length && j < right.length) {
             boolean takeLeft = r.compareValues(left[i], right[j]) <= 0;
             int value = takeLeft ? left[i++] : right[j++];
-            if (!takeLeft) {
-                r.countShift();
-            }
+            r.countShift();
             merged[mergedLen++] = value;
 
-            // Keep working array a valid permutation: [merged so far | rest of left | rest of right]
+            // Keep working array a valid snapshot: [merged so far | rest of left | rest of right]
             int writePos = lo;
             for (int m = 0; m < mergedLen; m++) {
                 r.set(writePos++, merged[m]);
@@ -152,7 +163,7 @@ public class MergeSort {
 
             r.record(
                 "Merging [" + lo + ".." + hi + "]: placed " + value + " at index " + k,
-                "Write " + value + " → index " + k,
+                "Merge [" + lo + ".." + hi + "] | Write " + value + " -> A[" + k + "]",
                 pointers,
                 active,
                 null,
@@ -160,13 +171,23 @@ public class MergeSort {
             );
         }
 
+        // Count remaining copies into the merged buffer
+        while (i < left.length) {
+            merged[mergedLen++] = left[i++];
+            r.countShift();
+        }
+        while (j < right.length) {
+            merged[mergedLen++] = right[j++];
+            r.countShift();
+        }
+
         int[] finalSlice = slice(r, lo, hi);
         updateNode(nodes, id, finalSlice, "merged");
         int[] spanIndices = range(lo, hi);
 
-        r.record(
-            "Merged range [" + lo + ".." + hi + "] → " + formatIntArray(finalSlice),
-            "Merged [" + lo + ".." + hi + "]",
+        r.recordPassBoundary(
+            "Merged subarray [" + lo + ".." + hi + "] -> " + formatIntArray(finalSlice),
+            "After Merge [" + lo + ".." + hi + "]: " + formatIntArray(r.getList().toIntArray()),
             new PointerDto[] { ptr(lo, "lo"), ptr(hi, "hi") },
             spanIndices,
             null,
