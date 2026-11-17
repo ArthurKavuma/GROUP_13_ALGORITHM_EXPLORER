@@ -16,11 +16,11 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals; 
 import static org.junit.jupiter.api.Assertions.assertFalse; 
 import static org.junit.jupiter.api.Assertions.assertNotNull; 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue; 
 
 /** 
-* Unit tests verifying all custom data structures, sorting algorithms, recursive 
-binary search, 
+* Unit tests verifying all custom data structures, sorting algorithms, recursive binary search, 
 * and the {@link AlgorithmController} REST contract. 
 */ 
 class AlgorithmExplorerTests { 
@@ -46,7 +46,6 @@ class AlgorithmExplorerTests {
         for (int i = 1; i <= 10; i++) { 
             arrayList.add(i * 10); 
         } 
-
         assertEquals(10, arrayList.size()); 
         assertEquals(50, arrayList.get(4)); 
         arrayList.set(4, 99); 
@@ -108,6 +107,7 @@ class AlgorithmExplorerTests {
         for (int v : values) { 
             sorted.add(v); 
         } 
+
         RecursiveBinarySearch binarySearch = new RecursiveBinarySearch(); 
         for (int i = 0; i < values.length; i++) { 
             CustomQueue<String> log = new CustomQueue<>(); 
@@ -120,4 +120,4 @@ class AlgorithmExplorerTests {
         assertEquals(-1, binarySearch.search(sorted, 100, missLog)); 
         assertFalse(missLog.isEmpty()); 
     } 
-} 
+}
