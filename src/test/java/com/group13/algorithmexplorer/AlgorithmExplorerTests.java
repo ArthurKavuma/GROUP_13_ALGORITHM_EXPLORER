@@ -44,8 +44,9 @@ class AlgorithmExplorerTests {
     void customDataStructuresWorkCorrectly() { 
         CustomArrayList<Integer> arrayList = new CustomArrayList<>(2); 
         for (int i = 1; i <= 10; i++) { 
-        arrayList.add(i * 10); 
+            arrayList.add(i * 10); 
         } 
+
         assertEquals(10, arrayList.size()); 
         assertEquals(50, arrayList.get(4)); 
         arrayList.set(4, 99); 
@@ -83,18 +84,18 @@ class AlgorithmExplorerTests {
 
         for (String algo : ALGORITHMS) { 
             for (String ds : STRUCTURES) { 
-            SortRequestDto req = new SortRequestDto(sample, algo, ds); 
-            ResponseEntity<TrackingObjectDto> res = controller.sort(req); 
-            TrackingObjectDto body = res.getBody(); 
-            assertNotNull(body); 
-            assertArrayEquals(expected, body.getOutput(), "Failed output for " + algo + " with " + ds); 
-            assertTrue(body.getSteps().length >= 2); 
-            StepDto lastStep = body.getSteps()[body.getSteps().length - 1]; 
-            assertArrayEquals(expected, lastStep.getArray());
+                SortRequestDto req = new SortRequestDto(sample, algo, ds); 
+                ResponseEntity<TrackingObjectDto> res = controller.sort(req); 
+                TrackingObjectDto body = res.getBody(); 
+                assertNotNull(body); 
+                assertArrayEquals(expected, body.getOutput(), "Failed output for " + algo + " with " + ds); 
+                assertTrue(body.getSteps().length >= 2); 
+                StepDto lastStep = body.getSteps()[body.getSteps().length - 1]; 
+                assertArrayEquals(expected, lastStep.getArray());
 
-            if ("MERGE_SORT".equals(algo)) { 
-                assertNotNull(lastStep.getMergeTree()); 
-                assertNotNull(lastStep.getMergeTree().getNodes().get("0-7")); 
+                if ("MERGE_SORT".equals(algo)) { 
+                    assertNotNull(lastStep.getMergeTree()); 
+                    assertNotNull(lastStep.getMergeTree().getNodes().get("0-7")); 
                 } 
             } 
         } 
@@ -107,7 +108,6 @@ class AlgorithmExplorerTests {
         for (int v : values) { 
             sorted.add(v); 
         } 
-
         RecursiveBinarySearch binarySearch = new RecursiveBinarySearch(); 
         for (int i = 0; i < values.length; i++) { 
             CustomQueue<String> log = new CustomQueue<>(); 
@@ -121,5 +121,3 @@ class AlgorithmExplorerTests {
         assertFalse(missLog.isEmpty()); 
     } 
 } 
-
-
