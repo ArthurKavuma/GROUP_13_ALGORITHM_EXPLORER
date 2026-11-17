@@ -2,12 +2,10 @@ package com.group13.algorithmexplorer.dto;
 
 /**
  * Top-level response payload returned by {@code POST /api/sort}.
- * Matches the {@code TrackingObject} contract in {@code app.js}.
  */
 public class TrackingObjectDto {
 
     private String algorithm;
-    private String dataStructure;
     private int[] input;
     private int[] output;
     private MetricsDto metrics;
@@ -18,14 +16,12 @@ public class TrackingObjectDto {
 
     public TrackingObjectDto(
         String algorithm,
-        String dataStructure,
         int[] input,
         int[] output,
         MetricsDto metrics,
         StepDto[] steps
     ) {
         this.algorithm = algorithm;
-        this.dataStructure = dataStructure;
         this.input = input;
         this.output = output;
         this.metrics = metrics;
@@ -38,14 +34,6 @@ public class TrackingObjectDto {
 
     public void setAlgorithm(String algorithm) {
         this.algorithm = algorithm;
-    }
-
-    public String getDataStructure() {
-        return dataStructure;
-    }
-
-    public void setDataStructure(String dataStructure) {
-        this.dataStructure = dataStructure;
     }
 
     public int[] getInput() {
@@ -80,4 +68,3 @@ public class TrackingObjectDto {
         this.steps = steps;
     }
 }
-

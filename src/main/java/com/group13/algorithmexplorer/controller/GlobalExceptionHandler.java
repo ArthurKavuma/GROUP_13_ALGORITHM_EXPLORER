@@ -1,47 +1,42 @@
 package com.group13.algorithmexplorer.controller;
 
+import com.group13.algorithmexplorer.dto.ErrorResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 /**
- * Translates validation and parsing exceptions into structured HTTP 400 JSON responses.
+ * Translates validation and parsing exceptions into structured HTTP 400 JSON responses
+ * without using {@code java.util.Map}.
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Map<String, Object>> handleIllegalArgument(IllegalArgumentException ex) {
+    public ResponseEntity<ErrorResponseDto> handleIllegalArgument(IllegalArgumentException ex) {
         return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<Map<String, Object>> handleUnreadableBody(HttpMessageNotReadableException ex) {
+    public ResponseEntity<ErrorResponseDto> handleUnreadableBody(HttpMessageNotReadableException ex) {
         return buildErrorResponse(
             HttpStatus.BAD_REQUEST,
-            "Malformed JSON request body. Expected { \"array\": [...], \"algorithm\": \"...\", \"dataStructure\": \"...\" }."
+            "Malformed JSON request body. Please check that all numeric inputs are valid integers."
         );
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
+    public ResponseEntity<ErrorResponseDto> handleGenericException(Exception ex) {
         return buildErrorResponse(
             HttpStatus.INTERNAL_SERVER_ERROR,
             ex.getMessage() != null ? ex.getMessage() : "Unexpected server error."
         );
     }
 
-    private static ResponseEntity<Map<String, Object>> buildErrorResponse(HttpStatus status, String message) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("status", status.value());
-        body.put("error", status.getReasonPhrase());
-        body.put("message", message);
+    private static ResponseEntity<ErrorResponseDto> buildErrorResponse(HttpStatus status, String message) {
+        ErrorResponseDto body = new ErrorResponseDto(status.value(), status.getReasonPhrase(), message);
         return ResponseEntity.status(status).body(body);
     }
 }
-
