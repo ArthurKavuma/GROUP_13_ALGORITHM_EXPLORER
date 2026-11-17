@@ -612,3 +612,26 @@ function renderArray(values, step = null) {
     }
   });
 }
+/* ==========================================================================
+ * 6. PLAYBACK CONTROLLER - missing helpers
+ * ========================================================================== */
+
+const lastStepIndex = () => (state.tracking ? state.tracking.steps.length - 1 : 0);
+const isPlaying = () => state.timerId !== null;
+
+function stepForward() {
+  if (state.currentStep < lastStepIndex()) goToStep(state.currentStep + 1);
+}
+
+function stepBackward() {
+  if (state.currentStep > 0) goToStep(state.currentStep - 1);
+}
+
+function togglePlay() {
+  isPlaying() ? pause() : play();
+}
+
+const manual = (action) => () => {
+  pause();
+  action();
+};
