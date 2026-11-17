@@ -1,4 +1,4 @@
-# Algorithm Explorer — CSC2107 Group 13
+# Algorithm Explorer —Group 13
 
 **Algorithm Explorer** is an interactive full-stack educational toolkit for **Recursion**, **Data Structures**, **Sorting Algorithms**, and **Time Complexity Analysis**, built from first principles without using standard `java.util` collection classes or built-in sort/search routines.
 
