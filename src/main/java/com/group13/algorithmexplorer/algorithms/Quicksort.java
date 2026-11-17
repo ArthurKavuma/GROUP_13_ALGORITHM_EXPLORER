@@ -65,8 +65,7 @@ public class QuickSort {
                     int a = r.get(i); 
                     r.swap(i, j); 
                     r.record( 
-                        "Partitioning around pivot " + pivot + ": swap " + a + " 
-                        and " + value, 
+                        "Partitioning around pivot " + pivot + ": swap " + a + "and " + value, 
                         "Swap index " + i + " and " + j, 
                         new PointerDto[] { ptr(i, "i"), ptr(j, "j"), ptr(hi, "pivot") }, 
                         new int[] { i, j }, 

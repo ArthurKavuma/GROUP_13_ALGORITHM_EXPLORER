@@ -233,8 +233,7 @@ public class StepTracker {
         String doneTrace = "Done: " + formatIntArray(snapshot); 
         StepDto finalStep = new StepDto( 
             snapshot, 
-            "Array sorted (" + comparisons + " comparisons, " + swaps + " 
-            swaps/shifts)", 
+            "Array sorted (" + comparisons + " comparisons, " + swaps + " swaps/shifts)", 
             decorateTrace(doneTrace, stepCounter), 
             new PointerDto[0], 
             new int[0], 

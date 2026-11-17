@@ -129,7 +129,34 @@
       class="step-description"
       aria-live="polite"
     ></p>
+    <!-- Playback controls -->
+<div class="controls-bar">
+  <button id="btn-first" type="button">⏮ First</button>
+  <button id="btn-prev" type="button">◀ Prev</button>
+  <button id="btn-play" type="button">▶ Play</button>
+  <button id="btn-next" type="button">Next ▶</button>
+  <button id="btn-last" type="button">Last ⏭</button>
+  <button id="btn-rewind" type="button">↺ Rewind</button>
+</div>
+
+<!-- Progress -->
+<div class="progress-row">
+  <label for="progress-slider">Step</label>
+  <input id="progress-slider" type="range" min="0" max="0" value="0" step="1">
+</div>
+
+<!-- Metrics -->
+<div class="metrics-row">
+  <span>Time: <span id="metric-time">-</span></span>
+  <span>Comparisons: <span id="metric-comparisons">-</span></span>
+  <span>Swaps: <span id="metric-swaps">-</span></span>
+</div>
   </section>
+  <!-- Trace log -->
+<section class="panel trace-panel">
+  <h3 id="trace-subtitle" class="panel-title">Trace</h3>
+  <div id="trace-log" class="trace-log"></div>
+</section>
 </div>
   </main>
 </body>
